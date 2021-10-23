@@ -20,7 +20,7 @@ public slots:
     void updateDeviceList(ASICDevice *device);
     void clearUpDeviceList(ASICDevice *device);
 private:
-    QVector <ASICDevice *> Devices;
+    QVector <ASICDevice *> UncheckedDevices;
 private slots:
     void on_ScanIsRun();
     void on_ScanIsDone();

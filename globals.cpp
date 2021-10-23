@@ -2,4 +2,4 @@
 
 Logger *gAppLogger;
 Scanner *gScanner;
-QVector <ASICDevice *> *gDeviceList;
+QVector <ASICDevice *> *gKnownDevicesList;

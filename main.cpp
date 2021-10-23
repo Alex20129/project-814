@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
     gAppLogger->Log("Log begin...", LOG_NOTICE);
 
     gScanner=new Scanner;
-    gDeviceList=new QVector <ASICDevice *>;
+    gKnownDevicesList=new QVector <ASICDevice *>;
 
     //QCoreApplication::connect(gScanner, SIGNAL(), gScanner, SLOT());
 

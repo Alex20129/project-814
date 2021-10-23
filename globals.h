@@ -29,6 +29,6 @@
 
 extern Logger *gAppLogger;
 extern Scanner *gScanner;
-extern QVector <ASICDevice *> *gDeviceList;
+extern QVector <ASICDevice *> *gKnownDevicesList;
 
 #endif // GLOBALS_H

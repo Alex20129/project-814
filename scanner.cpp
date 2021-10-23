@@ -36,12 +36,12 @@ Scanner::Scanner(QObject *parent) : QObject(parent)
 void Scanner::updateDeviceList(ASICDevice *device)
 {
     gAppLogger->Log("Scanner::updateDeviceList()", LOG_DEBUG);
-    disconnect(device, nullptr, this, nullptr);
-    Devices.removeOne(device);
+    disconnect(device, 0, 0, 0);
+    UncheckedDevices.removeOne(device);
     device->Stop();
-    device->SetNetworkRequestTimeout(DEFAULT_NETWORK_REQUEST_TIMEOUT);
+    gKnownDevicesList->append(device);
     emit(NewDeviceFound());
-    if(Devices.isEmpty())
+    if(UncheckedDevices.isEmpty())
     {
         emit(ScanIsDone());
     }
@@ -51,11 +51,11 @@ void Scanner::clearUpDeviceList(ASICDevice *device)
 {
     gAppLogger->Log("Scanner::clearUpDeviceList()", LOG_DEBUG);
     disconnect(device, 0, 0, 0);
-    Devices.removeOne(device);
+    UncheckedDevices.removeOne(device);
     device->Stop();
     device->Abort();
     device->deleteLater();
-    if(Devices.isEmpty())
+    if(UncheckedDevices.isEmpty())
     {
         emit(ScanIsDone());
     }
@@ -76,7 +76,7 @@ void Scanner::StartScanning()
     emit(ScanIsRun());
     quint32 address;
     QHostAddress AddrFrom((quint32)(0)), AddrTo((quint32)(10));
-    Devices.clear();
+    UncheckedDevices.clear();
     for(address=AddrFrom.toIPv4Address(); address<=AddrTo.toIPv4Address(); address++)
     {
         ASICDevice *newDevice=new ASICDevice;
@@ -85,7 +85,7 @@ void Scanner::StartScanning()
         newDevice->SetPassword(this->Password);
         newDevice->SetAPIPort(this->APIport);
         newDevice->SetWebPort(this->WEBport);
-        Devices.append(newDevice);
+        UncheckedDevices.append(newDevice);
         connect(newDevice, SIGNAL(DeviceExists(ASICDevice *)), this, SLOT(updateDeviceList(ASICDevice *)));
         connect(newDevice, SIGNAL(DeviceError(ASICDevice *)), this, SLOT(clearUpDeviceList(ASICDevice *)));
         newDevice->Check();
@@ -94,8 +94,8 @@ void Scanner::StartScanning()
 
 void Scanner::StopScanning()
 {
-    while(Devices.count())
+    while(UncheckedDevices.count())
     {
-        clearUpDeviceList(Devices.last());
+        clearUpDeviceList(UncheckedDevices.last());
     }
 }

@@ -149,14 +149,14 @@ void ASICDevice::Abort()
 {
     if(pAPIReply)
     {
-        if(pAPIReply->error())
+        if(pAPIReply->isRunning())
+        {
+            pAPIReply->abort();
+        }
+        if(pAPIReply->isFinished())
         {
             pAPIReply->disconnect();
             pAPIReply->deleteLater();
-        }
-        else if(pAPIReply->isRunning())
-        {
-            pAPIReply->abort();
         }
         pAPIReply=nullptr;
     }
@@ -211,7 +211,7 @@ void ASICDevice::ProcessDeviceData(QNetworkReply *reply)
     {
         pLastErrorCode=ERROR_NETWORK;
         emit(DeviceError(this));
-        qCritical()<<Address().toString()<<"ASICDevice::ProcessDeviceData reply: ERROR:"<<reply->errorString();
+        gAppLogger->Log(Address().toString()+"ASICDevice::ProcessDeviceData reply: ERROR: "+reply->errorString(), LOG_ERROR);
         goto alldone;
     }
     else
@@ -222,7 +222,7 @@ void ASICDevice::ProcessDeviceData(QNetworkReply *reply)
     {
         pLastErrorCode=ERROR_NETWORK_NO_DATA;
         emit(DeviceError(this));
-        qCritical()<<Address().toString()<<"ASICDevice::ProcessDeviceData reply: not readable";
+        gAppLogger->Log(Address().toString()+"ASICDevice::ProcessDeviceData reply: not readable", LOG_ERROR);
         goto alldone;
     }
     pLastErrorCode=NO_ERROR;
