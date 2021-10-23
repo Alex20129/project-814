@@ -21,7 +21,9 @@ Scanner::Scanner(QObject *parent) : QObject(parent)
 
         foreach(QNetworkAddressEntry entry, netInterface.addressEntries())
         {
-            if(entry.ip().protocol()!=QAbstractSocket::IPv6Protocol && !entry.ip().isLoopback())
+            if(entry.ip().protocol()!=QAbstractSocket::IPv6Protocol &&
+               !entry.ip().isLoopback() &&
+               !entry.ip().isNull())
             {
                 gAppLogger->Log("IP Address: " + entry.ip().toString(), LOG_NOTICE);
                 gAppLogger->Log("Netmask: " + entry.netmask().toString(), LOG_NOTICE);
