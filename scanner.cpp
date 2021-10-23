@@ -19,8 +19,7 @@ Scanner::Scanner(QObject *parent) : QObject(parent)
             gAppLogger->Log("HardwareAddress : " + netInterface.hardwareAddress(), LOG_NOTICE);
         }
 
-        QList<QNetworkAddressEntry> entryList = netInterface.addressEntries();
-        foreach(QNetworkAddressEntry entry, entryList)
+        foreach(QNetworkAddressEntry entry, netInterface.addressEntries())
         {
             if(entry.ip().protocol()!=QAbstractSocket::IPv6Protocol)
             {
