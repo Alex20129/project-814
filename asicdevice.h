@@ -67,6 +67,7 @@ private:
 private slots:
     void RequestDeviceData();
     void ProcessDeviceData(QNetworkReply *rep);
+    void on_AuthenticationRequired(QNetworkReply *reply, QAuthenticator *authenticator);
     void on_DataReceived();
     void on_metaDataChanged();
 };

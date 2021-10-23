@@ -44,6 +44,7 @@ ASICDevice::ASICDevice(QObject *parent) : QObject(parent)
 
     connect(pAPITimer, SIGNAL(timeout()), this, SLOT(RequestDeviceData()));
     connect(pAPIManager, SIGNAL(finished(QNetworkReply *)), this, SLOT(ProcessDeviceData(QNetworkReply *)));
+    connect(pAPIManager, SIGNAL(authenticationRequired(QNetworkReply *, QAuthenticator *)), this, SLOT(on_AuthenticationRequired(QNetworkReply *, QAuthenticator *)));
 
     connect(this, SIGNAL(DataReceived(ASICDevice *)), this, SLOT(on_DataReceived()));
     connect(this, SIGNAL(Updated()), this, SLOT(Refresh()));
@@ -236,6 +237,21 @@ void ASICDevice::ProcessDeviceData(QNetworkReply *rep)
     rep->deleteLater();
     ActiveThreadsNum--;
     pIsBusy=false;
+}
+
+void ASICDevice::on_AuthenticationRequired(QNetworkReply *reply, QAuthenticator *authenticator)
+{
+    if(reply->error()==QNetworkReply::NoError)
+    {
+        //gAppLogger->Log("ASICDevice::onAuthenticationNeeded reply success");
+    }
+    else
+    {
+        //gAppLogger->Log("ASICDevice::onAuthenticationNeeded reply error");
+        //gAppLogger->Log(reply->errorString());
+    }
+    authenticator->setPassword(pPassWord);
+    authenticator->setUser(pUserName);
 }
 
 void ASICDevice::on_DataReceived()
