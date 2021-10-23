@@ -59,12 +59,10 @@ void Logger::Log(const char *message, unsigned int level)
     pCurrDTstring=QDateTime::currentDateTime().toString("[hh:mm:ss | dd.MM.yyyy]");
     if(pLogFile && LogFileEnabled)
     {
-        fprintf(pLogFile, "%s ", pCurrDTstring.toStdString().data());
-        fprintf(pLogFile, "%s\n", message);
+        fprintf(pLogFile, "%s %s\n", pCurrDTstring.toStdString().data(), message);
         fflush(pLogFile);
     }
-    fprintf(stdout, "%s ", pCurrDTstring.toStdString().data());
-    fprintf(stdout, "%s\n", message);
+    fprintf(stdout, "%s %s\n", pCurrDTstring.toStdString().data(), message);
     fflush(stdout);
     pIsBusy=false;
 }
