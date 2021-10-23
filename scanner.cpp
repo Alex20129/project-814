@@ -5,7 +5,7 @@ Scanner::Scanner(QObject *parent) : QObject(parent)
 {
     connect(this, SIGNAL(ScanIsDone()), this, SLOT(on_scanIsDone()));
     connect(this, SIGNAL(ScanIsRun()), this, SLOT(on_scanIsRun()));
-
+/*
     foreach(QHostAddress addr, QNetworkInterface::allAddresses())
     {
         if(!addr.isLoopback() && !addr.isNull())
@@ -13,7 +13,7 @@ Scanner::Scanner(QObject *parent) : QObject(parent)
             gAppLogger->Log(addr.toString()+" interface address discovered", LOG_NOTICE);
         }
     }
-
+*/
     foreach(QNetworkInterface netInterface, QNetworkInterface::allInterfaces())
     {
         if(!netInterface.isValid())
@@ -31,9 +31,12 @@ Scanner::Scanner(QObject *parent) : QObject(parent)
         QList<QNetworkAddressEntry> entryList = netInterface.addressEntries();
         foreach(QNetworkAddressEntry entry, entryList)
         {
-            gAppLogger->Log("IP Address:" + entry.ip().toString(), LOG_NOTICE);
-            gAppLogger->Log("Netmask:" + entry.netmask().toString(), LOG_NOTICE);
-            gAppLogger->Log("Broadcast:" + entry.broadcast().toString(), LOG_NOTICE);
+            if(entry.ip().protocol()!=QAbstractSocket::IPv6Protocol)
+            {
+                gAppLogger->Log("IP Address:" + entry.ip().toString(), LOG_NOTICE);
+                gAppLogger->Log("Netmask:" + entry.netmask().toString(), LOG_NOTICE);
+                gAppLogger->Log("Broadcast:" + entry.broadcast().toString(), LOG_NOTICE);
+            }
         }
     }
 }
