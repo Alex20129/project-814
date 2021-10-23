@@ -3,8 +3,8 @@
 
 Scanner::Scanner(QObject *parent) : QObject(parent)
 {
-    connect(this, SIGNAL(ScanIsDone()), this, SLOT(on_scanIsDone()));
-    connect(this, SIGNAL(ScanIsRun()), this, SLOT(on_scanIsRun()));
+    connect(this, SIGNAL(ScanIsDone()), this, SLOT(on_ScanIsDone()));
+    connect(this, SIGNAL(ScanIsRun()), this, SLOT(on_ScanIsRun()));
 
     foreach(QNetworkInterface netInterface, QNetworkInterface::allInterfaces())
     {
@@ -39,7 +39,8 @@ void Scanner::updateDeviceList(ASICDevice *device)
     disconnect(device, nullptr, this, nullptr);
     Devices.removeOne(device);
     device->Stop();
-    device->SetNetworkRequestTimeout(5000);
+    device->SetNetworkRequestTimeout(DEFAULT_NETWORK_REQUEST_TIMEOUT);
+    emit(NewDeviceFound());
     if(Devices.isEmpty())
     {
         emit(ScanIsDone());
@@ -60,12 +61,12 @@ void Scanner::clearUpDeviceList(ASICDevice *device)
     }
 }
 
-void Scanner::on_scanIsDone()
+void Scanner::on_ScanIsDone()
 {
     gAppLogger->Log("Scanner::on_scanIsDone()", LOG_DEBUG);
 }
 
-void Scanner::on_scanIsRun()
+void Scanner::on_ScanIsRun()
 {
     gAppLogger->Log("Scanner::on_scanIsRun()", LOG_DEBUG);
 }

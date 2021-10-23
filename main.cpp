@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
     gScanner=new Scanner;
     gDeviceList=new QVector <ASICDevice *>;
 
-    //QCoreApplication::connect(gMainWindow, SIGNAL(need_to_show_scanner_window()), gScanner, SLOT(show()));
+    //QCoreApplication::connect(gScanner, SIGNAL(), gScanner, SLOT());
 
     gAppLogger->Log("Everything is prepared, start now.", LOG_NOTICE);
 

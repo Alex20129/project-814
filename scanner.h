@@ -9,6 +9,7 @@ class Scanner : public QObject
 signals:
     void ScanIsRun();
     void ScanIsDone();
+    void NewDeviceFound();
 public:
     explicit Scanner(QObject *parent=nullptr);
     QString UserName, Password;
@@ -21,8 +22,8 @@ public slots:
 private:
     QVector <ASICDevice *> Devices;
 private slots:
-    void on_scanIsRun();
-    void on_scanIsDone();
+    void on_ScanIsRun();
+    void on_ScanIsDone();
 };
 
 #endif // SCANNERWINDOW_H
