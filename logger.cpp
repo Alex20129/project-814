@@ -56,7 +56,7 @@ void Logger::Log(const char *message, unsigned int level)
         QCoreApplication::processEvents();
     }
     pIsBusy=true;
-    pCurrDTstring=QDateTime::currentDateTime().toString("[hh:mm:ss | dd.MM.yyyy]");
+    pCurrDTstring=QDateTime::currentDateTime().toString("dd.MM.yyyy | hh:mm:ss");
     if(pLogFile && LogFileEnabled)
     {
         fprintf(pLogFile, "%s %s\n", pCurrDTstring.toStdString().data(), message);

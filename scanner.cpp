@@ -15,17 +15,17 @@ Scanner::Scanner(QObject *parent) : QObject(parent)
         QNetworkInterface::InterfaceFlags flags = netInterface.flags();
         if(flags.testFlag(QNetworkInterface::IsRunning) && !flags.testFlag(QNetworkInterface::IsLoopBack))
         {
-            gAppLogger->Log("Device : " + netInterface.name(), LOG_NOTICE);
-            gAppLogger->Log("HardwareAddress : " + netInterface.hardwareAddress(), LOG_NOTICE);
+            gAppLogger->Log("Device: " + netInterface.name(), LOG_NOTICE);
+            gAppLogger->Log("HardwareAddress: " + netInterface.hardwareAddress(), LOG_NOTICE);
         }
 
         foreach(QNetworkAddressEntry entry, netInterface.addressEntries())
         {
             if(entry.ip().protocol()!=QAbstractSocket::IPv6Protocol && !entry.ip().isLoopback())
             {
-                gAppLogger->Log("IP Address:" + entry.ip().toString(), LOG_NOTICE);
-                gAppLogger->Log("Netmask:" + entry.netmask().toString(), LOG_NOTICE);
-                gAppLogger->Log("Broadcast:" + entry.broadcast().toString(), LOG_NOTICE);
+                gAppLogger->Log("IP Address: " + entry.ip().toString(), LOG_NOTICE);
+                gAppLogger->Log("Netmask: " + entry.netmask().toString(), LOG_NOTICE);
+                gAppLogger->Log("Broadcast: " + entry.broadcast().toString(), LOG_NOTICE);
             }
         }
     }
