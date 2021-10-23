@@ -70,7 +70,7 @@ void Scanner::on_scanIsRun()
     gAppLogger->Log("Scanner::on_scanIsRun()", LOG_DEBUG);
 }
 
-void Scanner::on_scanButton_clicked()
+void Scanner::StartScanning()
 {
     emit(ScanIsRun());
     quint32 address;
@@ -91,7 +91,7 @@ void Scanner::on_scanButton_clicked()
     }
 }
 
-void Scanner::on_stopButton_clicked()
+void Scanner::StopScanning()
 {
     while(Devices.count())
     {

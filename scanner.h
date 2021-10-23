@@ -14,6 +14,8 @@ public:
     QString UserName, Password;
     quint16 APIport, WEBport;
 public slots:
+    void StartScanning();
+    void StopScanning();
     void updateDeviceList(ASICDevice *device);
     void clearUpDeviceList(ASICDevice *device);
 private:
@@ -21,8 +23,6 @@ private:
 private slots:
     void on_scanIsRun();
     void on_scanIsDone();
-    void on_scanButton_clicked();
-    void on_stopButton_clicked();
 };
 
 #endif // SCANNERWINDOW_H
