@@ -5,15 +5,7 @@ Scanner::Scanner(QObject *parent) : QObject(parent)
 {
     connect(this, SIGNAL(ScanIsDone()), this, SLOT(on_scanIsDone()));
     connect(this, SIGNAL(ScanIsRun()), this, SLOT(on_scanIsRun()));
-/*
-    foreach(QHostAddress addr, QNetworkInterface::allAddresses())
-    {
-        if(!addr.isLoopback() && !addr.isNull())
-        {
-            gAppLogger->Log(addr.toString()+" interface address discovered", LOG_NOTICE);
-        }
-    }
-*/
+
     foreach(QNetworkInterface netInterface, QNetworkInterface::allInterfaces())
     {
         if(!netInterface.isValid())
@@ -25,7 +17,6 @@ Scanner::Scanner(QObject *parent) : QObject(parent)
         {
             gAppLogger->Log("Device : " + netInterface.name(), LOG_NOTICE);
             gAppLogger->Log("HardwareAddress : " + netInterface.hardwareAddress(), LOG_NOTICE);
-            gAppLogger->Log("Human Readable Name : " + netInterface.humanReadableName(), LOG_NOTICE);
         }
 
         QList<QNetworkAddressEntry> entryList = netInterface.addressEntries();
