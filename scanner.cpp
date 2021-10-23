@@ -13,6 +13,29 @@ Scanner::Scanner(QObject *parent) : QObject(parent)
             gAppLogger->Log(addr.toString()+" interface address discovered", LOG_NOTICE);
         }
     }
+
+    foreach(QNetworkInterface netInterface, QNetworkInterface::allInterfaces())
+    {
+        if(!netInterface.isValid())
+        {
+            continue;
+        }
+        QNetworkInterface::InterfaceFlags flags = netInterface.flags();
+        if(flags.testFlag(QNetworkInterface::IsRunning) && !flags.testFlag(QNetworkInterface::IsLoopBack))
+        {
+            gAppLogger->Log("Device : " + netInterface.name(), LOG_NOTICE);
+            gAppLogger->Log("HardwareAddress : " + netInterface.hardwareAddress(), LOG_NOTICE);
+            gAppLogger->Log("Human Readable Name : " + netInterface.humanReadableName(), LOG_NOTICE);
+        }
+
+        QList<QNetworkAddressEntry> entryList = netInterface.addressEntries();
+        foreach(QNetworkAddressEntry entry, entryList)
+        {
+            gAppLogger->Log("IP Address:" + entry.ip().toString(), LOG_NOTICE);
+            gAppLogger->Log("Netmask:" + entry.netmask().toString(), LOG_NOTICE);
+            gAppLogger->Log("Broadcast:" + entry.broadcast().toString(), LOG_NOTICE);
+        }
+    }
 }
 
 void Scanner::updateDeviceList(ASICDevice *device)
