@@ -17,17 +17,17 @@ Scanner::Scanner(QObject *parent) : QObject(parent)
         {
             gAppLogger->Log("Device: " + netInterface.name(), LOG_NOTICE);
             gAppLogger->Log("HardwareAddress: " + netInterface.hardwareAddress(), LOG_NOTICE);
-        }
 
-        foreach(QNetworkAddressEntry entry, netInterface.addressEntries())
-        {
-            if(entry.ip().protocol()!=QAbstractSocket::IPv6Protocol &&
-               !entry.ip().isLoopback() &&
-               !entry.ip().isNull())
+            foreach(QNetworkAddressEntry entry, netInterface.addressEntries())
             {
-                gAppLogger->Log("IP Address: " + entry.ip().toString(), LOG_NOTICE);
-                gAppLogger->Log("Netmask: " + entry.netmask().toString(), LOG_NOTICE);
-                gAppLogger->Log("Broadcast: " + entry.broadcast().toString(), LOG_NOTICE);
+                if(entry.ip().protocol()!=QAbstractSocket::IPv6Protocol &&
+                   !entry.ip().isLoopback() &&
+                   !entry.ip().isNull())
+                {
+                    gAppLogger->Log("IP Address: " + entry.ip().toString(), LOG_NOTICE);
+                    gAppLogger->Log("Netmask: " + entry.netmask().toString(), LOG_NOTICE);
+                    gAppLogger->Log("Broadcast: " + entry.broadcast().toString(), LOG_NOTICE);
+                }
             }
         }
     }
