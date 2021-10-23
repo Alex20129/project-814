@@ -6,9 +6,8 @@ Scanner::Scanner(QObject *parent) : QObject(parent)
     connect(this, SIGNAL(ScanIsDone()), this, SLOT(on_scanIsDone()));
     connect(this, SIGNAL(ScanIsRun()), this, SLOT(on_scanIsRun()));
 
-    for(int i=0; i<QNetworkInterface::allAddresses().count(); i++)
+    foreach(QHostAddress addr, QNetworkInterface::allAddresses())
     {
-        QHostAddress addr=QNetworkInterface::allAddresses().at(i);
         if(!addr.isLoopback() && !addr.isNull())
         {
             gAppLogger->Log(addr.toString()+" interface address discovered", LOG_NOTICE);

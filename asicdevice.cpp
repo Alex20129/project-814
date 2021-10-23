@@ -198,7 +198,7 @@ void ASICDevice::RequestDeviceData()
     connect(pAPIReply, SIGNAL(metaDataChanged()), this, SLOT(on_metaDataChanged()));
 }
 
-void ASICDevice::ProcessDeviceData(QNetworkReply *rep)
+void ASICDevice::ProcessDeviceData(QNetworkReply *reply)
 {
     NetLag*=0.8;
     NetLag+=pRequestStartTime.msecsTo(QTime::currentTime())*0.2;
@@ -207,18 +207,18 @@ void ASICDevice::ProcessDeviceData(QNetworkReply *rep)
         this->killTimer(pNetworkTimeoutTimerID);
         pNetworkTimeoutTimerID=0;
     }
-    if(rep->error())
+    if(reply->error())
     {
         pLastErrorCode=ERROR_NETWORK;
         emit(DeviceError(this));
-        qCritical()<<Address().toString()<<"ASICDevice::ProcessDeviceData reply: ERROR:"<<rep->errorString();
+        qCritical()<<Address().toString()<<"ASICDevice::ProcessDeviceData reply: ERROR:"<<reply->errorString();
         goto alldone;
     }
     else
     {
         //qInfo()<<Address().toString()<<"ASICDevice::ProcessDeviceData reply: OK";
     }
-    if(!rep->isReadable())
+    if(!reply->isReadable())
     {
         pLastErrorCode=ERROR_NETWORK_NO_DATA;
         emit(DeviceError(this));
@@ -227,14 +227,14 @@ void ASICDevice::ProcessDeviceData(QNetworkReply *rep)
     }
     pLastErrorCode=NO_ERROR;
     pReceivedData->clear();
-    *pReceivedData=rep->readAll();
+    *pReceivedData=reply->readAll();
     pReceivedData->remove(0, pReceivedData->indexOf(QByteArray("CgLogCallback")));
     pReceivedData->remove(0, pReceivedData->indexOf('{'));
     pReceivedData->remove(pReceivedData->lastIndexOf('}')+1, pReceivedData->length());
     emit(DataReceived(this));
     alldone:
-    rep->disconnect();
-    rep->deleteLater();
+    reply->disconnect();
+    reply->deleteLater();
     ActiveThreadsNum--;
     pIsBusy=false;
 }
