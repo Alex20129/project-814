@@ -12,7 +12,7 @@ class ASICDevice : public QObject
     Q_OBJECT
 public:
     static unsigned int ActiveThreadsNum;
-    explicit ASICDevice(QObject *parent = nullptr);
+    explicit ASICDevice(QObject *parent=nullptr);
     void SetAddress(QHostAddress address);
     void SetUserName(QString userName);
     void SetPassword(QString passWord);

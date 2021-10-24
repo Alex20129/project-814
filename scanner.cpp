@@ -18,7 +18,7 @@ void Scanner::DiscoverNetworkInterfaces()
         {
             continue;
         }
-        QNetworkInterface::InterfaceFlags flags = netInterface.flags();
+        QNetworkInterface::InterfaceFlags flags=netInterface.flags();
         if(flags.testFlag(QNetworkInterface::IsRunning) && !flags.testFlag(QNetworkInterface::IsLoopBack))
         {
             gAppLogger->Log("Device: " + netInterface.name(), LOG_NOTICE);
