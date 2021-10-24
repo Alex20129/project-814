@@ -5,8 +5,6 @@
 #include <QTimer>
 #include <QtNetwork>
 
-#define data_items_num 24
-
 class ASICDevice : public QObject
 {
     Q_OBJECT
