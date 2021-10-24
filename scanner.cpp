@@ -18,15 +18,15 @@ Scanner::Scanner(QObject *parent) : QObject(parent)
             gAppLogger->Log("Device: " + netInterface.name(), LOG_NOTICE);
             gAppLogger->Log("HardwareAddress: " + netInterface.hardwareAddress(), LOG_NOTICE);
 
-            foreach(QNetworkAddressEntry entry, netInterface.addressEntries())
+            foreach(QNetworkAddressEntry addrEntry, netInterface.addressEntries())
             {
-                if(entry.ip().protocol()!=QAbstractSocket::IPv6Protocol &&
-                   !entry.ip().isLoopback() &&
-                   !entry.ip().isNull())
+                if(addrEntry.ip().protocol()!=QAbstractSocket::IPv6Protocol &&
+                   !addrEntry.ip().isLoopback() && !addrEntry.ip().isNull())
                 {
-                    gAppLogger->Log("IP Address: " + entry.ip().toString(), LOG_NOTICE);
-                    gAppLogger->Log("Netmask: " + entry.netmask().toString(), LOG_NOTICE);
-                    gAppLogger->Log("Broadcast: " + entry.broadcast().toString(), LOG_NOTICE);
+                    AvailableIFAddresses.append(addrEntry);
+                    gAppLogger->Log("IP Address: " + addrEntry.ip().toString(), LOG_NOTICE);
+                    gAppLogger->Log("Netmask: " + addrEntry.netmask().toString(), LOG_NOTICE);
+                    gAppLogger->Log("Broadcast: " + addrEntry.broadcast().toString(), LOG_NOTICE);
                 }
             }
         }
