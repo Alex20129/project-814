@@ -22,7 +22,6 @@ public:
     double THSmm;
     double THSavg;
     double Freq;
-    uint WORKMODE;
     int MTmax[3];
     uint MTavg[3];
     uint MW[3];

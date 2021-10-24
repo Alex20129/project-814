@@ -14,7 +14,6 @@ ASICDevice::ASICDevice(QObject *parent) : QObject(parent)
     THSmm=
     THSavg=
     Freq=
-    WORKMODE=
     MTmax[0]=
     MTmax[1]=
     MTmax[2]=
@@ -273,11 +272,6 @@ void ASICDevice::on_DataReceived()
             continue;
         }
         if(1==sscanf(&pReceivedData->data()[i], "Freq[%lf]", &Freq))
-        {
-            is_updated++;
-            continue;
-        }
-        if(1==sscanf(&pReceivedData->data()[i], "WORKMODE[%u]", &WORKMODE))
         {
             is_updated++;
             continue;
