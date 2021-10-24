@@ -180,7 +180,10 @@ void ASICDevice::RequestDeviceData()
     ActiveThreadsNum++;
     if(ActiveThreadsNum>DEFAULT_THREADS_MAX_NUM)
     {
-        pAPITimer->start();
+        if(this->IsActive())
+        {
+            pAPITimer->start();
+        }
         ActiveThreadsNum--;
         pIsBusy=false;
         return;
@@ -212,7 +215,7 @@ void ASICDevice::ProcessDeviceData(QNetworkReply *reply)
     }
     else
     {
-        //qInfo()<<Address().toString()<<"ASICDevice::ProcessDeviceData reply: OK";
+        gAppLogger->Log(Address().toString()+"ASICDevice::ProcessDeviceData reply: OK", LOG_INFO);
     }
     if(!reply->isReadable())
     {
