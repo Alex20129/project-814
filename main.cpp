@@ -8,8 +8,10 @@ int main(int argc, char *argv[])
     gAppLogger=new Logger;
     gAppLogger->Log("Log begin...", LOG_NOTICE);
 
-    gScanner=new Scanner;
     gKnownDevicesList=new QVector <ASICDevice *>;
+    gScanner=new Scanner;
+    gScanner->UserName=QString("root");
+    gScanner->Password=QString("root");
 
     gAppLogger->Log("Everything is prepared, start now.", LOG_NOTICE);
 
