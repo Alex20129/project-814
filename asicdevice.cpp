@@ -166,8 +166,8 @@ void ASICDevice::timerEvent(QTimerEvent *event)
 {
     if(event->timerId()==pNetworkTimeoutTimerID)
     {
-        this->killTimer(pNetworkTimeoutTimerID);
         event->accept();
+        this->killTimer(pNetworkTimeoutTimerID);
         pNetworkTimeoutTimerID=0;
         pLastErrorCode=ERROR_NETWORK_REQUEST_TIMEOUT;
         this->Abort();
@@ -200,13 +200,13 @@ void ASICDevice::RequestDeviceData()
 
 void ASICDevice::ProcessDeviceData(QNetworkReply *reply)
 {
-    NetLag*=0.8;
-    NetLag+=pRequestStartTime.msecsTo(QTime::currentTime())*0.2;
     if(pNetworkTimeoutTimerID)
     {
         this->killTimer(pNetworkTimeoutTimerID);
         pNetworkTimeoutTimerID=0;
     }
+    NetLag*=0.8;
+    NetLag+=pRequestStartTime.msecsTo(QTime::currentTime())*0.2;
     if(reply->error())
     {
         pLastErrorCode=ERROR_NETWORK;
