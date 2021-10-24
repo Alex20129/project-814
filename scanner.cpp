@@ -85,9 +85,9 @@ void Scanner::on_NewDeviceFound()
 void Scanner::StartScanning()
 {
     gAppLogger->Log("Scanner::StartScanning()", LOG_DEBUG);
-    emit(ScanIsRun());
     quint32 address;
     QHostAddress AddrFrom, AddrTo;
+    emit(ScanIsRun());
 
     foreach(QNetworkAddressEntry IFAddress, KnownIFAddresses)
     {
@@ -100,20 +100,7 @@ void Scanner::StartScanning()
 
     gAppLogger->Log("this code is not finished yet. exit now", LOG_DEBUG);
     QCoreApplication::exit(123);
-
-    foreach(QNetworkAddressEntry IFAddress, KnownIFAddresses)
-    {
-        uint32_t lastPossible=(uint32_t)0xFFFFFFFF-IFAddress.netmask().toIPv4Address();
-        gAppLogger->Log(QString::number(IFAddress.ip().toIPv4Address()));
-        gAppLogger->Log(QString::number(IFAddress.netmask().toIPv4Address()));
-
-        AddrFrom=QHostAddress((quint32)(IFAddress.ip().toIPv4Address() & IFAddress.netmask().toIPv4Address()));
-        AddrTo=QHostAddress((quint32)(IFAddress.ip().toIPv4Address() & IFAddress.netmask().toIPv4Address() + lastPossible));
-        gAppLogger->Log(QString::number(AddrFrom.toIPv4Address()));
-        gAppLogger->Log(QString::number(AddrTo.toIPv4Address()));
-        gAppLogger->Log(QString::number(lastPossible));
-    }
-
+    return;
 
     UncheckedDevices.clear();
     for(address=AddrFrom.toIPv4Address(); address<=AddrTo.toIPv4Address(); address++)

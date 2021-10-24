@@ -47,7 +47,6 @@ ASICDevice::ASICDevice(QObject *parent) : QObject(parent)
     connect(pAPIManager, SIGNAL(authenticationRequired(QNetworkReply *, QAuthenticator *)), this, SLOT(on_AuthenticationRequired(QNetworkReply *, QAuthenticator *)));
 
     connect(this, SIGNAL(DataReceived(ASICDevice *)), this, SLOT(on_DataReceived()));
-    connect(this, SIGNAL(Updated()), this, SLOT(Refresh()));
 }
 
 void ASICDevice::SetAddress(QHostAddress address)
