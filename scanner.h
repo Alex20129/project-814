@@ -14,6 +14,7 @@ public:
     explicit Scanner(QObject *parent=nullptr);
     QString UserName, Password;
     quint16 APIport, WEBport;
+    void DiscoverNetworkInterfaces();
 public slots:
     void StartScanning();
     void StopScanning();
@@ -25,6 +26,7 @@ private:
 private slots:
     void on_ScanIsRun();
     void on_ScanIsDone();
+    void on_NewDeviceFound();
 };
 
 #endif // SCANNERWINDOW_H

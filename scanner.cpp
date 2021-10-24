@@ -5,7 +5,13 @@ Scanner::Scanner(QObject *parent) : QObject(parent)
 {
     connect(this, SIGNAL(ScanIsDone()), this, SLOT(on_ScanIsDone()));
     connect(this, SIGNAL(ScanIsRun()), this, SLOT(on_ScanIsRun()));
+    connect(this, SIGNAL(NewDeviceFound()), this, SLOT(on_NewDeviceFound()));
+    DiscoverNetworkInterfaces();
+}
 
+void Scanner::DiscoverNetworkInterfaces()
+{
+    gAppLogger->Log("Scanner::DiscoverNetworkInterfaces()", LOG_DEBUG);
     foreach(QNetworkInterface netInterface, QNetworkInterface::allInterfaces())
     {
         if(!netInterface.isValid())
@@ -30,16 +36,6 @@ Scanner::Scanner(QObject *parent) : QObject(parent)
                 }
             }
         }
-    }
-
-    QHostAddress AddrFrom, AddrTo;
-    foreach(QNetworkAddressEntry IFAddress, KnownIFAddresses)
-    {
-        uint32_t lastPossible=(uint32_t)(0xFFFFFFFF-IFAddress.netmask().toIPv4Address()-1);
-        AddrFrom=QHostAddress((quint32)(IFAddress.ip().toIPv4Address()&IFAddress.netmask().toIPv4Address())+1);
-        AddrTo=QHostAddress((quint32)(IFAddress.ip().toIPv4Address()&IFAddress.netmask().toIPv4Address())+lastPossible);
-        gAppLogger->Log("first possible device "+AddrFrom.toString());
-        gAppLogger->Log("last possible device "+AddrTo.toString());
     }
 }
 
@@ -81,11 +77,26 @@ void Scanner::on_ScanIsRun()
     gAppLogger->Log("Scanner::on_scanIsRun()", LOG_DEBUG);
 }
 
+void Scanner::on_NewDeviceFound()
+{
+    gAppLogger->Log("Scanner::on_NewDeviceFound()", LOG_DEBUG);
+}
+
 void Scanner::StartScanning()
 {
+    gAppLogger->Log("Scanner::StartScanning()", LOG_DEBUG);
     emit(ScanIsRun());
     quint32 address;
     QHostAddress AddrFrom, AddrTo;
+
+    foreach(QNetworkAddressEntry IFAddress, KnownIFAddresses)
+    {
+        uint32_t lastPossible=(uint32_t)(0xFFFFFFFF-IFAddress.netmask().toIPv4Address()-1);
+        AddrFrom=QHostAddress((quint32)(IFAddress.ip().toIPv4Address()&IFAddress.netmask().toIPv4Address())+1);
+        AddrTo=QHostAddress((quint32)(IFAddress.ip().toIPv4Address()&IFAddress.netmask().toIPv4Address())+lastPossible);
+        gAppLogger->Log("first possible device "+AddrFrom.toString());
+        gAppLogger->Log("last possible device "+AddrTo.toString());
+    }
 
     foreach(QNetworkAddressEntry IFAddress, KnownIFAddresses)
     {
