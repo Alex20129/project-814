@@ -10,8 +10,8 @@ int main(int argc, char *argv[])
 
     gKnownDevicesList=new QVector <ASICDevice *>;
     gScanner=new Scanner;
-    gScanner->UserName=QString("root");
-    gScanner->Password=QString("root");
+    gScanner->SetUserName(QString("root"));
+    gScanner->SetPassword(QString("root"));
 
     gAppLogger->Log("Everything is prepared, start now.", LOG_NOTICE);
 

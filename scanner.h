@@ -12,15 +12,17 @@ signals:
     void NewDeviceFound();
 public:
     explicit Scanner(QObject *parent=nullptr);
-    QString UserName, Password;
     quint16 APIport, WEBport;
     void DiscoverNetworkInterfaces();
+    void SetUserName(QString userName);
+    void SetPassword(QString password);
 public slots:
     void StartScanning();
     void StopScanning();
     void updateDeviceList(ASICDevice *device);
     void clearUpDeviceList(ASICDevice *device);
 private:
+    QString pUserName, pPassword;
     QVector <ASICDevice *> UncheckedDevices;
     QList <QNetworkAddressEntry> KnownIFAddresses;
 private slots:

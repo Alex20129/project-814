@@ -39,6 +39,16 @@ void Scanner::DiscoverNetworkInterfaces()
     }
 }
 
+void Scanner::SetUserName(QString userName)
+{
+    pUserName=userName;
+}
+
+void Scanner::SetPassword(QString password)
+{
+    pPassword=password;
+}
+
 void Scanner::updateDeviceList(ASICDevice *device)
 {
     gAppLogger->Log("Scanner::updateDeviceList()", LOG_DEBUG);
@@ -107,8 +117,8 @@ void Scanner::StartScanning()
     {
         ASICDevice *newDevice=new ASICDevice;
         newDevice->SetAddress(QHostAddress(address));
-        newDevice->SetUserName(this->UserName);
-        newDevice->SetPassword(this->Password);
+        newDevice->SetUserName(this->pUserName);
+        newDevice->SetPassword(this->pPassword);
         newDevice->SetAPIPort(this->APIport);
         newDevice->SetWebPort(this->WEBport);
         UncheckedDevices.append(newDevice);
