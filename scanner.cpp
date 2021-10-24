@@ -98,6 +98,9 @@ void Scanner::StartScanning()
         gAppLogger->Log("last possible device "+AddrTo.toString());
     }
 
+    gAppLogger->Log("this code is not finished yet. exit now", LOG_DEBUG);
+    QCoreApplication::exit(123);
+
     foreach(QNetworkAddressEntry IFAddress, KnownIFAddresses)
     {
         uint32_t lastPossible=(uint32_t)0xFFFFFFFF-IFAddress.netmask().toIPv4Address();
