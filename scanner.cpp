@@ -35,9 +35,9 @@ Scanner::Scanner(QObject *parent) : QObject(parent)
     QHostAddress AddrFrom, AddrTo;
     foreach(QNetworkAddressEntry IFAddress, KnownIFAddresses)
     {
-        uint32_t lastPossible=(uint32_t) (0xFFFFFFFF-IFAddress.netmask().toIPv4Address()-1);
-        AddrFrom=QHostAddress((quint32) (IFAddress.ip().toIPv4Address() & IFAddress.netmask().toIPv4Address())+1);
-        AddrTo=QHostAddress((quint32) (IFAddress.ip().toIPv4Address() & IFAddress.netmask().toIPv4Address())+lastPossible);
+        uint32_t lastPossible=(uint32_t)(0xFFFFFFFF-IFAddress.netmask().toIPv4Address()-1);
+        AddrFrom=QHostAddress((quint32)(IFAddress.ip().toIPv4Address()&IFAddress.netmask().toIPv4Address())+1);
+        AddrTo=QHostAddress((quint32)(IFAddress.ip().toIPv4Address()&IFAddress.netmask().toIPv4Address())+lastPossible);
         gAppLogger->Log("first possible device "+AddrFrom.toString());
         gAppLogger->Log("last possible device "+AddrTo.toString());
     }
