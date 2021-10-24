@@ -6,7 +6,7 @@
 #include "scanner.h"
 
 #define PROGRAM_NAME    "asicconf"
-#define PROGRAM_VERSION "0.1"
+#define PROGRAM_VERSION "0.1.5"
 
 #define DEFAULT_UPDATE_INTERVAL			4500
 #define DEFAULT_NETWORK_REQUEST_TIMEOUT	2000

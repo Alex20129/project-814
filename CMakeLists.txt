@@ -14,7 +14,7 @@ FIND_PACKAGE(Qt5 COMPONENTS Core Network REQUIRED)
 LINK_LIBRARIES(Qt5::Core Qt5::Network)
 LINK_LIBRARIES(-static-libgcc -static-libstdc++)
 
-ADD_EXECUTABLE(${PROJECT_NAME}
+ADD_EXECUTABLE("asicconf"
 		main.cpp
 		asicdevice.cpp
 		globals.cpp
