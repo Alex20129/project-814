@@ -54,7 +54,6 @@ void Scanner::updateDeviceList(ASICDevice *device)
     gAppLogger->Log("Scanner::updateDeviceList()", LOG_DEBUG);
     disconnect(device, 0, 0, 0);
     UncheckedDevices.removeOne(device);
-    device->Stop();
     gKnownDevicesList->append(device);
     emit(NewDeviceFound());
     if(UncheckedDevices.isEmpty())

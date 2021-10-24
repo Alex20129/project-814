@@ -8,11 +8,12 @@
 #define PROGRAM_NAME    "asicconf"
 #define PROGRAM_VERSION "0.1"
 
-#define DEFAULT_UPDATE_INTERVAL         4500
-#define DEFAULT_NETWORK_REQUEST_TIMEOUT 3000
-#define DEFAULT_THREADS_MAX_NUM         10
-#define DEFAULT_API_PORT                4028
-#define DEFAULT_WEB_PORT                80
+#define DEFAULT_UPDATE_INTERVAL			4500
+#define DEFAULT_NETWORK_REQUEST_TIMEOUT	3000
+#define DEFAULT_SINGLE_SHOT_DELAY		3
+#define DEFAULT_THREADS_MAX_NUM			10
+#define DEFAULT_API_PORT					4028
+#define DEFAULT_WEB_PORT					80
 
 #define NO_ERROR                      0
 #define ERROR_NETWORK                 1

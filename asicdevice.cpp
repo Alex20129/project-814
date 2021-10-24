@@ -130,10 +130,7 @@ void ASICDevice::Start()
 
 void ASICDevice::Check()
 {
-    if(!pAPITimer->isActive())
-    {
-        pAPITimer->singleShot(3, this, SLOT(RequestDeviceData()));
-    }
+    pAPITimer->singleShot(DEFAULT_SINGLE_SHOT_DELAY, Qt::CoarseTimer, this, SLOT(RequestDeviceData()));
 }
 
 void ASICDevice::Stop()

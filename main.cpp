@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
 
     gAppLogger->Log("Everything is prepared, start now.", LOG_NOTICE);
 
-    QTimer::singleShot(3, Qt::CoarseTimer, gScanner, SLOT(StartScanning()));
+    QTimer::singleShot(DEFAULT_SINGLE_SHOT_DELAY, Qt::CoarseTimer, gScanner, SLOT(StartScanning()));
 
     return App.exec();
 }
