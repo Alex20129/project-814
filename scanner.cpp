@@ -23,13 +23,23 @@ Scanner::Scanner(QObject *parent) : QObject(parent)
                 if(addrEntry.ip().protocol()!=QAbstractSocket::IPv6Protocol &&
                    !addrEntry.ip().isLoopback() && !addrEntry.ip().isNull())
                 {
-                    AvailableIFAddresses.append(addrEntry);
+                    KnownIFAddresses.append(addrEntry);
                     gAppLogger->Log("IP Address: " + addrEntry.ip().toString(), LOG_NOTICE);
                     gAppLogger->Log("Netmask: " + addrEntry.netmask().toString(), LOG_NOTICE);
                     gAppLogger->Log("Broadcast: " + addrEntry.broadcast().toString(), LOG_NOTICE);
                 }
             }
         }
+    }
+
+    QHostAddress AddrFrom, AddrTo;
+    foreach(QNetworkAddressEntry IFAddress, KnownIFAddresses)
+    {
+        uint32_t lastPossible=(uint32_t) (0xFFFFFFFF-IFAddress.netmask().toIPv4Address()-1);
+        AddrFrom=QHostAddress((quint32) (IFAddress.ip().toIPv4Address() & IFAddress.netmask().toIPv4Address())+1);
+        AddrTo=QHostAddress((quint32) (IFAddress.ip().toIPv4Address() & IFAddress.netmask().toIPv4Address())+lastPossible);
+        gAppLogger->Log("first possible device "+AddrFrom.toString());
+        gAppLogger->Log("last possible device "+AddrTo.toString());
     }
 }
 
@@ -75,7 +85,22 @@ void Scanner::StartScanning()
 {
     emit(ScanIsRun());
     quint32 address;
-    QHostAddress AddrFrom((quint32)(0)), AddrTo((quint32)(10));
+    QHostAddress AddrFrom, AddrTo;
+
+    foreach(QNetworkAddressEntry IFAddress, KnownIFAddresses)
+    {
+        uint32_t lastPossible=(uint32_t)0xFFFFFFFF-IFAddress.netmask().toIPv4Address();
+        gAppLogger->Log(QString::number(IFAddress.ip().toIPv4Address()));
+        gAppLogger->Log(QString::number(IFAddress.netmask().toIPv4Address()));
+
+        AddrFrom=QHostAddress((quint32)(IFAddress.ip().toIPv4Address() & IFAddress.netmask().toIPv4Address()));
+        AddrTo=QHostAddress((quint32)(IFAddress.ip().toIPv4Address() & IFAddress.netmask().toIPv4Address() + lastPossible));
+        gAppLogger->Log(QString::number(AddrFrom.toIPv4Address()));
+        gAppLogger->Log(QString::number(AddrTo.toIPv4Address()));
+        gAppLogger->Log(QString::number(lastPossible));
+    }
+
+
     UncheckedDevices.clear();
     for(address=AddrFrom.toIPv4Address(); address<=AddrTo.toIPv4Address(); address++)
     {

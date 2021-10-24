@@ -21,7 +21,7 @@ public slots:
     void clearUpDeviceList(ASICDevice *device);
 private:
     QVector <ASICDevice *> UncheckedDevices;
-    QList <QNetworkAddressEntry> AvailableIFAddresses;
+    QList <QNetworkAddressEntry> KnownIFAddresses;
 private slots:
     void on_ScanIsRun();
     void on_ScanIsDone();
