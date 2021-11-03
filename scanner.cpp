@@ -100,20 +100,17 @@ void Scanner::StartScanning()
 
     foreach(QNetworkAddressEntry IFAddress, KnownIFAddresses)
     {
-        uint32_t lastPossible=(uint32_t)(0xFFFFFFFF-IFAddress.netmask().toIPv4Address()-1);
+        uint32_t lastPossible=(uint32_t)(0xFFFFFFFF-IFAddress.netmask().toIPv4Address());
         AddrFrom=QHostAddress((quint32)(IFAddress.ip().toIPv4Address()&IFAddress.netmask().toIPv4Address())+1);
         AddrTo=QHostAddress((quint32)(IFAddress.ip().toIPv4Address()&IFAddress.netmask().toIPv4Address())+lastPossible);
         gAppLogger->Log("first possible device "+AddrFrom.toString());
         gAppLogger->Log("last possible device "+AddrTo.toString());
     }
 
-    gAppLogger->Log("this code is not finished yet. exit now", LOG_DEBUG);
-    QCoreApplication::exit(123);
-    return;
-
     UncheckedDevices.clear();
-    for(address=AddrFrom.toIPv4Address(); address<=AddrTo.toIPv4Address(); address++)
+    for(address=AddrFrom.toIPv4Address(); address<AddrTo.toIPv4Address(); address++)
     {
+        /*
         ASICDevice *newDevice=new ASICDevice;
         newDevice->SetAddress(QHostAddress(address));
         newDevice->SetUserName(this->pUserName);
@@ -124,7 +121,11 @@ void Scanner::StartScanning()
         connect(newDevice, SIGNAL(DeviceExists(ASICDevice *)), this, SLOT(updateDeviceList(ASICDevice *)));
         connect(newDevice, SIGNAL(DeviceError(ASICDevice *)), this, SLOT(clearUpDeviceList(ASICDevice *)));
         newDevice->Check();
+        */
     }
+    gAppLogger->Log("this code is not finished yet. exit now", LOG_DEBUG);
+    QCoreApplication::exit(123);
+    return;
 }
 
 void Scanner::StopScanning()
