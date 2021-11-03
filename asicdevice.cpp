@@ -119,17 +119,17 @@ bool ASICDevice::IsAlarmed()
     return(pLastErrorCode!=NO_ERROR);
 }
 
+void ASICDevice::Check()
+{
+    pAPITimer->singleShot(DEFAULT_SINGLE_SHOT_DELAY, Qt::CoarseTimer, this, SLOT(RequestDeviceData()));
+}
+
 void ASICDevice::Start()
 {
     if(!pAPITimer->isActive())
     {
         pAPITimer->start();
     }
-}
-
-void ASICDevice::Check()
-{
-    pAPITimer->singleShot(DEFAULT_SINGLE_SHOT_DELAY, Qt::CoarseTimer, this, SLOT(RequestDeviceData()));
 }
 
 void ASICDevice::Stop()

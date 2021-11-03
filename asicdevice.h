@@ -41,8 +41,8 @@ signals:
     void DeviceExists(ASICDevice *device);
     void Updated();
 public slots:
-    void Start();
     void Check();
+    void Start();
     void Stop();
     void Abort();
 private:
