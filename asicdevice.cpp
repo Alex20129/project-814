@@ -84,9 +84,9 @@ void ASICDevice::SetGroupID(uint id)
     pGroupID=id;
 }
 
-void ASICDevice::SetNetworkRequestTimeout(uint timeout)
+void ASICDevice::SetNetworkRequestTimeout(uint msec)
 {
-    pNetworkRequestTimeout=timeout;
+    pNetworkRequestTimeout=msec;
 }
 
 uint ASICDevice::NetworkRequestTimeout()

@@ -17,7 +17,7 @@ public:
     void SetWebPort(quint16 port);
     void SetAPIPort(quint16 port);
     void SetGroupID(uint id);
-    void SetNetworkRequestTimeout(uint timeout);
+    void SetNetworkRequestTimeout(uint msec);
     uint NetworkRequestTimeout();
     double THSmm;
     double THSavg;
