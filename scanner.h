@@ -31,6 +31,4 @@ private slots:
     void on_NewDeviceFound();
 };
 
-#define UNCHECKED_DEVICES_MAX_NUM 512
-
 #endif // SCANNERWINDOW_H

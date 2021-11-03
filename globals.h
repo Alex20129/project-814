@@ -14,6 +14,7 @@
 #define DEFAULT_THREADS_MAX_NUM			10
 #define DEFAULT_API_PORT					4028
 #define DEFAULT_WEB_PORT					80
+#define UNCHECKED_DEVICES_MAX_NUM		512
 
 #define NO_ERROR                      0
 #define ERROR_NETWORK                 1
