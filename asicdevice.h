@@ -31,7 +31,6 @@ public:
     uint FanMax[4];
     QHostAddress Address();
     QUrl URL();
-    uint GroupID();
     bool IsActive();
     bool IsAlarmed();
     unsigned int NetLag;

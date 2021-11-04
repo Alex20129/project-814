@@ -10,7 +10,6 @@ ASICDevice::ASICDevice(QObject *parent) : QObject(parent)
     pWebPort=DEFAULT_WEB_PORT;
     pAPIPort=DEFAULT_API_PORT;
     pAPIReply=nullptr;
-    pGroupID=
     THSmm=
     THSavg=
     Freq=
@@ -79,11 +78,6 @@ void ASICDevice::SetAPIPort(quint16 port)
     pAPIPort=port;
 }
 
-void ASICDevice::SetGroupID(uint id)
-{
-    pGroupID=id;
-}
-
 void ASICDevice::SetNetworkRequestTimeout(uint msec)
 {
     pNetworkRequestTimeout=msec;
@@ -102,11 +96,6 @@ QHostAddress ASICDevice::Address()
 QUrl ASICDevice::URL()
 {
     return(pURL);
-}
-
-uint ASICDevice::GroupID()
-{
-    return(pGroupID);
 }
 
 bool ASICDevice::IsActive()
