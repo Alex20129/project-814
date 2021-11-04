@@ -33,7 +33,6 @@ signals:
     void DeviceExists(ASICDevice *device);
     void Updated();
 public slots:
-    void Check();
     void Start();
     void Stop();
     void Abort();

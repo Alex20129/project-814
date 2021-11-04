@@ -91,11 +91,6 @@ bool ASICDevice::IsAlarmed()
     return(pLastErrorCode!=NO_ERROR);
 }
 
-void ASICDevice::Check()
-{
-    pAPITimer->singleShot(DEFAULT_SINGLE_SHOT_DELAY, Qt::CoarseTimer, this, SLOT(RequestDeviceData()));
-}
-
 void ASICDevice::Start()
 {
     gAppLogger->Log("ASICDevice::Start()", LOG_DEBUG);
@@ -141,7 +136,6 @@ void ASICDevice::timerEvent(QTimerEvent *event)
 
 void ASICDevice::RequestDeviceData()
 {
-    gAppLogger->Log("ASICDevice::RequestDeviceData() "+pAddress.toString(), LOG_DEBUG);
     if(pIsBusy)
     {
         return;
@@ -158,6 +152,7 @@ void ASICDevice::RequestDeviceData()
         pIsBusy=false;
         return;
     }
+    gAppLogger->Log("ASICDevice::RequestDeviceData() "+pAddress.toString(), LOG_DEBUG);
     QNetworkRequest NewRequest;
     NewRequest.setUrl(pURL);
     NewRequest.setHeader(QNetworkRequest::UserAgentHeader, DEFAULT_USER_AGENT);

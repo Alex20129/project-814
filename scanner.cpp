@@ -54,6 +54,7 @@ void Scanner::updateDeviceList(ASICDevice *device)
     gAppLogger->Log("Scanner::updateDeviceList()", LOG_DEBUG);
     disconnect(device, 0, 0, 0);
     UncheckedDevices.removeOne(device);
+    device->Stop();
     gKnownDevicesList->append(device);
     device->SetNetworkRequestTimeout(DEFAULT_NETWORK_REQUEST_TIMEOUT);
     emit(NewDeviceFound());
@@ -119,7 +120,7 @@ void Scanner::StartScanning()
             UncheckedDevices.append(newDevice);
             connect(newDevice, SIGNAL(DeviceExists(ASICDevice *)), this, SLOT(updateDeviceList(ASICDevice *)));
             connect(newDevice, SIGNAL(DeviceError(ASICDevice *)), this, SLOT(clearUpDeviceList(ASICDevice *)));
-            newDevice->Check();
+            newDevice->Start();
             while(UncheckedDevices.count()>UNCHECKED_DEVICES_MAX_NUM)
             {
                 QCoreApplication::processEvents();
