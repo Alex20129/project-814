@@ -11,6 +11,7 @@ class ASICDevice : public QObject
 public:
     static unsigned int ActiveThreadsNum;
     explicit ASICDevice(QObject *parent=nullptr);
+    ~ASICDevice();
     void SetAddress(QHostAddress address);
     void SetUserName(QString userName);
     void SetPassword(QString passWord);
@@ -19,21 +20,13 @@ public:
     void SetGroupID(uint id);
     void SetNetworkRequestTimeout(uint msec);
     uint NetworkRequestTimeout();
-    double THSmm;
-    double THSavg;
-    double Freq;
-    int MTmax[3];
-    uint MTavg[3];
-    uint MW[3];
-    uint Temp;
-    uint TMax;
-    uint Fan[4];
-    uint FanMax[4];
     QHostAddress Address();
     QUrl URL();
     bool IsActive();
     bool IsAlarmed();
     unsigned int NetLag;
+    QString Type, Miner;
+    QStringList Pools;
 signals:
     void DataReceived(ASICDevice *device);
     void DeviceError(ASICDevice *device);

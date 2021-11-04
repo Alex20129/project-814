@@ -70,7 +70,6 @@ void Scanner::clearUpDeviceList(ASICDevice *device)
     disconnect(device, 0, 0, 0);
     UncheckedDevices.removeOne(device);
     device->Stop();
-    device->Abort();
     device->deleteLater();
     if(UncheckedDevices.isEmpty())
     {
@@ -80,22 +79,22 @@ void Scanner::clearUpDeviceList(ASICDevice *device)
 
 void Scanner::on_ScanIsDone()
 {
-    gAppLogger->Log("Scanner::on_scanIsDone()", LOG_DEBUG);
+    gAppLogger->Log("ASICDevice::on_ScanIsDone()", LOG_DEBUG);
 }
 
 void Scanner::on_ScanIsRun()
 {
-    gAppLogger->Log("Scanner::on_scanIsRun()", LOG_DEBUG);
+    gAppLogger->Log("ASICDevice::on_ScanIsRun()", LOG_DEBUG);
 }
 
 void Scanner::on_NewDeviceFound()
 {
-    gAppLogger->Log("Scanner::on_NewDeviceFound()", LOG_DEBUG);
+    gAppLogger->Log("ASICDevice::on_NewDeviceFound()", LOG_DEBUG);
 }
 
 void Scanner::StartScanning()
 {
-    gAppLogger->Log("Scanner::StartScanning()", LOG_DEBUG);
+    gAppLogger->Log("ASICDevice::StartScanning()", LOG_DEBUG);
     quint32 address;
     QHostAddress AddrFrom, AddrTo;
     emit(ScanIsRun());
@@ -131,6 +130,7 @@ void Scanner::StartScanning()
 
 void Scanner::StopScanning()
 {
+    gAppLogger->Log("ASICDevice::StopScanning()", LOG_DEBUG);
     while(UncheckedDevices.count())
     {
         clearUpDeviceList(UncheckedDevices.last());

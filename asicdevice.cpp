@@ -10,28 +10,6 @@ ASICDevice::ASICDevice(QObject *parent) : QObject(parent)
     pWebPort=DEFAULT_WEB_PORT;
     pAPIPort=DEFAULT_API_PORT;
     pAPIReply=nullptr;
-    THSmm=
-    THSavg=
-    Freq=
-    MTmax[0]=
-    MTmax[1]=
-    MTmax[2]=
-    MTavg[0]=
-    MTavg[1]=
-    MTavg[2]=
-    MW[0]=
-    MW[1]=
-    MW[2]=
-    Temp=
-    TMax=
-    Fan[0]=
-    Fan[1]=
-    Fan[2]=
-    Fan[3]=
-    FanMax[0]=
-    FanMax[1]=
-    FanMax[2]=
-    FanMax[3]=0;
 
     pNetworkRequestTimeout=DEFAULT_NETWORK_REQUEST_TIMEOUT;
 
@@ -43,12 +21,17 @@ ASICDevice::ASICDevice(QObject *parent) : QObject(parent)
     connect(pAPITimer, SIGNAL(timeout()), this, SLOT(RequestDeviceData()));
     connect(pAPIManager, SIGNAL(finished(QNetworkReply *)), this, SLOT(ProcessDeviceData(QNetworkReply *)));
     connect(pAPIManager, SIGNAL(authenticationRequired(QNetworkReply *, QAuthenticator *)), this, SLOT(on_AuthenticationRequired(QNetworkReply *, QAuthenticator *)));
-
     connect(this, SIGNAL(DataReceived(ASICDevice *)), this, SLOT(on_DataReceived()));
+}
+
+ASICDevice::~ASICDevice()
+{
+    delete pReceivedData;
 }
 
 void ASICDevice::SetAddress(QHostAddress address)
 {
+    gAppLogger->Log("ASICDevice::SetAddress() "+address.toString(), LOG_DEBUG);
     pAddress=address;
     pURL.setScheme("http");
     pURL.setHost(pAddress.toString());
@@ -115,6 +98,7 @@ void ASICDevice::Check()
 
 void ASICDevice::Start()
 {
+    gAppLogger->Log("ASICDevice::Start()", LOG_DEBUG);
     if(!pAPITimer->isActive())
     {
         pAPITimer->start();
@@ -123,6 +107,7 @@ void ASICDevice::Start()
 
 void ASICDevice::Stop()
 {
+    gAppLogger->Log("ASICDevice::Stop()", LOG_DEBUG);
     if(pAPITimer->isActive())
     {
         pAPITimer->stop();
@@ -131,16 +116,12 @@ void ASICDevice::Stop()
 
 void ASICDevice::Abort()
 {
+    gAppLogger->Log("ASICDevice::Abort()", LOG_DEBUG);
     if(pAPIReply)
     {
         if(pAPIReply->isRunning())
         {
             pAPIReply->abort();
-        }
-        if(pAPIReply->isFinished())
-        {
-            pAPIReply->disconnect();
-            pAPIReply->deleteLater();
         }
         pAPIReply=nullptr;
     }
@@ -160,6 +141,7 @@ void ASICDevice::timerEvent(QTimerEvent *event)
 
 void ASICDevice::RequestDeviceData()
 {
+    gAppLogger->Log("ASICDevice::RequestDeviceData() "+pAddress.toString(), LOG_DEBUG);
     if(pIsBusy)
     {
         return;
@@ -187,6 +169,7 @@ void ASICDevice::RequestDeviceData()
 
 void ASICDevice::ProcessDeviceData(QNetworkReply *reply)
 {
+    gAppLogger->Log("ASICDevice::ProcessDeviceData()", LOG_DEBUG);
     if(pNetworkTimeoutTimerID)
     {
         this->killTimer(pNetworkTimeoutTimerID);
@@ -198,12 +181,12 @@ void ASICDevice::ProcessDeviceData(QNetworkReply *reply)
     {
         pLastErrorCode=ERROR_NETWORK;
         emit(DeviceError(this));
-        gAppLogger->Log(Address().toString()+"ASICDevice::ProcessDeviceData reply: ERROR: "+reply->errorString(), LOG_ERROR);
+        gAppLogger->Log(Address().toString()+" ASICDevice::ProcessDeviceData reply: ERROR: "+reply->errorString(), LOG_ERROR);
         goto alldone;
     }
     else
     {
-        gAppLogger->Log(Address().toString()+"ASICDevice::ProcessDeviceData reply: OK", LOG_INFO);
+        gAppLogger->Log(Address().toString()+" ASICDevice::ProcessDeviceData reply: OK", LOG_DEBUG);
     }
     if(!reply->isReadable())
     {
@@ -215,27 +198,24 @@ void ASICDevice::ProcessDeviceData(QNetworkReply *reply)
     pLastErrorCode=NO_ERROR;
     pReceivedData->clear();
     *pReceivedData=reply->readAll();
-    pReceivedData->remove(0, pReceivedData->indexOf(QByteArray("CgLogCallback")));
-    pReceivedData->remove(0, pReceivedData->indexOf('{'));
-    pReceivedData->remove(pReceivedData->lastIndexOf('}')+1, pReceivedData->length());
-    emit(DataReceived(this));
     alldone:
     reply->disconnect();
     reply->deleteLater();
+    emit(DataReceived(this));
     ActiveThreadsNum--;
     pIsBusy=false;
 }
 
 void ASICDevice::on_AuthenticationRequired(QNetworkReply *reply, QAuthenticator *authenticator)
 {
+    gAppLogger->Log("ASICDevice::on_AuthenticationRequired()", LOG_DEBUG);
     if(reply->error()==QNetworkReply::NoError)
     {
-        //gAppLogger->Log("ASICDevice::onAuthenticationNeeded reply success");
+        gAppLogger->Log(this->Address().toString()+" reply [success]", LOG_DEBUG);
     }
     else
     {
-        //gAppLogger->Log("ASICDevice::onAuthenticationNeeded reply error");
-        //gAppLogger->Log(reply->errorString());
+        gAppLogger->Log(this->Address().toString()+" reply [error] "+reply->errorString(), LOG_ERROR);
     }
     authenticator->setPassword(pPassWord);
     authenticator->setUser(pUserName);
@@ -243,87 +223,34 @@ void ASICDevice::on_AuthenticationRequired(QNetworkReply *reply, QAuthenticator 
 
 void ASICDevice::on_DataReceived()
 {
-    int i=0, is_updated=0;
-    for(; i<pReceivedData->size(); i++)
+    int i, is_updated=0;
+    uint uval;
+    char str[128], poolsubstr[512];
+    for(i=0; i<pReceivedData->size(); i++)
     {
-        if(1==sscanf(&pReceivedData->data()[i], "GHSmm[%lf]", &THSmm))
+        if(1==sscanf(&pReceivedData->data()[i], ",Type=%127[^,|]", str))
         {
-            unsigned int THSmmRound=THSmm/100.0;
-            THSmm=THSmmRound/10.0;
+            Type=QString(str);
             is_updated++;
             continue;
         }
-        if(1==sscanf(&pReceivedData->data()[i], "GHSavg[%lf]", &THSavg))
+        if(1==sscanf(&pReceivedData->data()[i], ",Miner=%127[^,|]", str))
         {
-            unsigned int THSavgRound=THSavg/100.0;
-            THSavg=THSavgRound/10.0;
+            Miner=QString(str);
             is_updated++;
             continue;
         }
-        if(1==sscanf(&pReceivedData->data()[i], "Freq[%lf]", &Freq))
+        if(2==sscanf(&pReceivedData->data()[i], "|POOL=%u,%511[^|]", &uval, poolsubstr))
         {
-            is_updated++;
-            continue;
-        }
-        if(3==sscanf(&pReceivedData->data()[i], "MTmax[%i %i %i]", &MTmax[0], &MTmax[1], &MTmax[2]))
-        {
-            is_updated++;
-            continue;
-        }
-        if(3==sscanf(&pReceivedData->data()[i], "MTavg[%u %u %u]", &MTavg[0], &MTavg[1], &MTavg[2]))
-        {
-            is_updated++;
-            continue;
-        }
-        if(3==sscanf(&pReceivedData->data()[i], "MW[%u %u %u]", &MW[0], &MW[1], &MW[2]))
-        {
-            is_updated++;
-            continue;
-        }
-        if(1==sscanf(&pReceivedData->data()[i], "Temp[%u]", &Temp))
-        {
-            is_updated++;
-            continue;
-        }
-        if(1==sscanf(&pReceivedData->data()[i], "TMax[%u]", &TMax))
-        {
-            is_updated++;
-            continue;
-        }
-        if(1==sscanf(&pReceivedData->data()[i], "Fan1[%u]", &Fan[0]))
-        {
-            if(Fan[0]>FanMax[0])
+            if(uval>=DEVICE_POOLS_NUM)
             {
-                FanMax[0]=Fan[0];
+                continue;
             }
-            is_updated++;
-            continue;
-        }
-        if(1==sscanf(&pReceivedData->data()[i], "Fan2[%u]", &Fan[1]))
-        {
-            if(Fan[1]>FanMax[1])
+            if(sscanf(poolsubstr, "URL=%127[^,]", str))
             {
-                FanMax[1]=Fan[1];
+                Pools.append(str);
+                is_updated++;
             }
-            is_updated++;
-            continue;
-        }
-        if(1==sscanf(&pReceivedData->data()[i], "Fan3[%u]", &Fan[2]))
-        {
-            if(Fan[2]>FanMax[2])
-            {
-                FanMax[2]=Fan[2];
-            }
-            is_updated++;
-            continue;
-        }
-        if(1==sscanf(&pReceivedData->data()[i], "Fan4[%u]", &Fan[3]))
-        {
-            if(Fan[3]>FanMax[3])
-            {
-                FanMax[3]=Fan[3];
-            }
-            is_updated++;
             continue;
         }
     }
