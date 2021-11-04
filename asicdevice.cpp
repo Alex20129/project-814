@@ -66,6 +66,11 @@ void ASICDevice::SetNetworkRequestTimeout(uint msec)
     pNetworkRequestTimeout=msec;
 }
 
+void ASICDevice::SetUpdateInterval(uint msec)
+{
+    pAPITimer->setInterval(msec);
+}
+
 uint ASICDevice::NetworkRequestTimeout()
 {
     return pNetworkRequestTimeout;

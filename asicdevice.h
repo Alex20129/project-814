@@ -19,6 +19,7 @@ public:
     void SetAPIPort(quint16 port);
     void SetGroupID(uint id);
     void SetNetworkRequestTimeout(uint msec);
+    void SetUpdateInterval(uint msec);
     uint NetworkRequestTimeout();
     QHostAddress Address();
     QUrl URL();
