@@ -120,11 +120,11 @@ void Scanner::StartScanning()
             UncheckedDevices.append(newDevice);
             connect(newDevice, SIGNAL(DeviceExists(ASICDevice *)), this, SLOT(updateDeviceList(ASICDevice *)));
             connect(newDevice, SIGNAL(DeviceError(ASICDevice *)), this, SLOT(clearUpDeviceList(ASICDevice *)));
-            newDevice->Start();
             while(UncheckedDevices.count()>UNCHECKED_DEVICES_MAX_NUM)
             {
                 QCoreApplication::processEvents();
             }
+            newDevice->Start();
         }
     }
 }
