@@ -8,6 +8,11 @@
 class ASICDevice : public QObject
 {
     Q_OBJECT
+signals:
+    void DataReceived(ASICDevice *device);
+    void DeviceError(ASICDevice *device);
+    void DeviceExists(ASICDevice *device);
+    void Updated();
 public:
     static unsigned int ActiveThreadsNum;
     explicit ASICDevice(QObject *parent=nullptr);
@@ -18,9 +23,8 @@ public:
     void SetWebPort(quint16 port);
     void SetAPIPort(quint16 port);
     void SetGroupID(uint id);
-    void SetNetworkRequestTimeout(uint msec);
     void SetUpdateInterval(uint msec);
-    uint NetworkRequestTimeout();
+    void SetNetworkRequestLifetime(uint msec);
     QHostAddress Address();
     QUrl URL();
     bool IsActive();
@@ -28,18 +32,14 @@ public:
     unsigned int NetLag;
     QString Type, Miner;
     QStringList Pools;
-signals:
-    void DataReceived(ASICDevice *device);
-    void DeviceError(ASICDevice *device);
-    void DeviceExists(ASICDevice *device);
-    void Updated();
 public slots:
     void Start();
     void Stop();
     void Abort();
 private:
-    uint pNetworkRequestTimeout;
-    QTimer *pAPITimer;
+    uint pUpdateInterval;
+    uint pNetworkRequestLifetime;
+    QTimer *pUpdateTimer, *pRequestLifeTimer;
     QNetworkAccessManager *pAPIManager;
     QNetworkReply *pAPIReply;
     bool pIsBusy;
@@ -51,8 +51,6 @@ private:
     QUrl pURL;
     QTime pRequestStartTime;
     QByteArray *pReceivedData;
-    int pNetworkTimeoutTimerID;
-    void timerEvent(QTimerEvent *event);
 private slots:
     void RequestDeviceData();
     void ProcessDeviceData(QNetworkReply *reply);

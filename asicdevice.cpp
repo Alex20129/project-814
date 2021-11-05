@@ -11,15 +11,22 @@ ASICDevice::ASICDevice(QObject *parent) : QObject(parent)
     pAPIPort=DEFAULT_API_PORT;
     pAPIReply=nullptr;
 
-    pNetworkRequestTimeout=DEFAULT_NETWORK_REQUEST_TIMEOUT;
-
     pReceivedData=new QByteArray;
     pAPIManager=new QNetworkAccessManager(this);
-    pAPITimer=new QTimer(this);
-    pAPITimer->setTimerType(Qt::CoarseTimer);
-    pAPITimer->setInterval(DEFAULT_UPDATE_INTERVAL);
 
-    connect(pAPITimer, SIGNAL(timeout()), this, SLOT(RequestDeviceData()));
+    pUpdateTimer=new QTimer(this);
+    pUpdateTimer->setTimerType(Qt::CoarseTimer);
+    pUpdateTimer->setInterval(DEFAULT_UPDATE_INTERVAL);
+    pUpdateInterval=DEFAULT_UPDATE_INTERVAL;
+
+    pRequestLifeTimer=new QTimer(this);
+    pRequestLifeTimer->setTimerType(Qt::CoarseTimer);
+    pRequestLifeTimer->setInterval(DEFAULT_NETWORK_REQUEST_LIFETIME);
+    pNetworkRequestLifetime=DEFAULT_NETWORK_REQUEST_LIFETIME;
+
+    connect(pUpdateTimer, SIGNAL(timeout()), this, SLOT(RequestDeviceData()));
+    connect(pRequestLifeTimer, SIGNAL(timeout()), this, SLOT(Abort()));
+
     connect(pAPIManager, SIGNAL(finished(QNetworkReply *)), this, SLOT(ProcessDeviceData(QNetworkReply *)));
     connect(pAPIManager, SIGNAL(authenticationRequired(QNetworkReply *, QAuthenticator *)), this, SLOT(on_AuthenticationRequired(QNetworkReply *, QAuthenticator *)));
     connect(this, SIGNAL(DataReceived(ASICDevice *)), this, SLOT(on_DataReceived()));
@@ -62,19 +69,24 @@ void ASICDevice::SetAPIPort(quint16 port)
     pAPIPort=port;
 }
 
-void ASICDevice::SetNetworkRequestTimeout(uint msec)
-{
-    pNetworkRequestTimeout=msec;
-}
-
 void ASICDevice::SetUpdateInterval(uint msec)
 {
-    pAPITimer->setInterval(msec);
+    pUpdateInterval=msec;
+    if(pUpdateInterval==0)
+    {
+        pUpdateInterval=DEFAULT_UPDATE_INTERVAL;
+    }
+    pUpdateTimer->setInterval(pUpdateInterval);
 }
 
-uint ASICDevice::NetworkRequestTimeout()
+void ASICDevice::SetNetworkRequestLifetime(uint msec)
 {
-    return pNetworkRequestTimeout;
+    pNetworkRequestLifetime=msec;
+    if(pNetworkRequestLifetime==0)
+    {
+        pNetworkRequestLifetime=DEFAULT_NETWORK_REQUEST_LIFETIME;
+    }
+    pRequestLifeTimer->setInterval(pNetworkRequestLifetime);
 }
 
 QHostAddress ASICDevice::Address()
@@ -89,7 +101,7 @@ QUrl ASICDevice::URL()
 
 bool ASICDevice::IsActive()
 {
-    return(pAPITimer->isActive());
+    return(pUpdateTimer->isActive());
 }
 
 bool ASICDevice::IsAlarmed()
@@ -100,18 +112,18 @@ bool ASICDevice::IsAlarmed()
 void ASICDevice::Start()
 {
     gAppLogger->Log("ASICDevice::Start()", LOG_DEBUG);
-    if(!pAPITimer->isActive())
+    if(!pUpdateTimer->isActive())
     {
-        pAPITimer->start();
+        pUpdateTimer->start();
     }
 }
 
 void ASICDevice::Stop()
 {
     gAppLogger->Log("ASICDevice::Stop()", LOG_DEBUG);
-    if(pAPITimer->isActive())
+    if(pUpdateTimer->isActive())
     {
-        pAPITimer->stop();
+        pUpdateTimer->stop();
     }
 }
 
@@ -122,19 +134,10 @@ void ASICDevice::Abort()
     {
         if(pAPIReply->isRunning())
         {
+            pLastErrorCode=ERROR_NETWORK_REQUEST_TIMEOUT;
             pAPIReply->abort();
         }
         pAPIReply=nullptr;
-    }
-}
-
-void ASICDevice::timerEvent(QTimerEvent *event)
-{
-    if(event->timerId()==pNetworkTimeoutTimerID)
-    {
-        event->accept();
-        pLastErrorCode=ERROR_NETWORK_REQUEST_TIMEOUT;
-        this->Abort();
     }
 }
 
@@ -150,7 +153,7 @@ void ASICDevice::RequestDeviceData()
     {
         if(this->IsActive())
         {
-            pAPITimer->start();
+            pUpdateTimer->start();
         }
         ActiveThreadsNum--;
         pIsBusy=false;
@@ -161,7 +164,7 @@ void ASICDevice::RequestDeviceData()
     NewRequest.setUrl(pURL);
     NewRequest.setHeader(QNetworkRequest::UserAgentHeader, DEFAULT_USER_AGENT);
     pRequestStartTime=QTime::currentTime();
-    pNetworkTimeoutTimerID=this->startTimer(pNetworkRequestTimeout, Qt::CoarseTimer);
+    pRequestLifeTimer->singleShot(pNetworkRequestLifetime, this, SLOT(abort()));
     pAPIReply=pAPIManager->get(NewRequest);
     connect(pAPIReply, SIGNAL(metaDataChanged()), this, SLOT(on_metaDataChanged()));
 }
@@ -169,13 +172,6 @@ void ASICDevice::RequestDeviceData()
 void ASICDevice::ProcessDeviceData(QNetworkReply *reply)
 {
     gAppLogger->Log("ASICDevice::ProcessDeviceData()", LOG_DEBUG);
-    if(pNetworkTimeoutTimerID)
-    {
-        this->killTimer(pNetworkTimeoutTimerID);
-        pNetworkTimeoutTimerID=0;
-    }
-    NetLag*=0.8;
-    NetLag+=pRequestStartTime.msecsTo(QTime::currentTime())*0.2;
     if(reply->error())
     {
         pLastErrorCode=ERROR_NETWORK;
@@ -187,11 +183,13 @@ void ASICDevice::ProcessDeviceData(QNetworkReply *reply)
     {
         gAppLogger->Log(Address().toString()+" ASICDevice::ProcessDeviceData reply: OK", LOG_DEBUG);
     }
+    NetLag*=0.8;
+    NetLag+=pRequestStartTime.msecsTo(QTime::currentTime())*0.2;
     if(!reply->isReadable())
     {
         pLastErrorCode=ERROR_NETWORK_NO_DATA;
         emit(DeviceError(this));
-        gAppLogger->Log(Address().toString()+"ASICDevice::ProcessDeviceData reply: not readable", LOG_ERROR);
+        gAppLogger->Log(Address().toString()+"ASICDevice::ProcessDeviceData reply: no data to read", LOG_ERROR);
         goto alldone;
     }
     pLastErrorCode=NO_ERROR;

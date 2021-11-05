@@ -56,7 +56,7 @@ void Scanner::updateDeviceList(ASICDevice *device)
     disconnect(device, 0, this, 0);
     UncheckedDevices.removeOne(device);
     device->Stop();
-    device->SetNetworkRequestTimeout(DEFAULT_NETWORK_REQUEST_TIMEOUT);
+    device->SetNetworkRequestLifetime(DEFAULT_NETWORK_REQUEST_LIFETIME);
     device->SetUpdateInterval(DEFAULT_UPDATE_INTERVAL);
     gKnownDevicesList->append(device);
     emit(NewDeviceFound());
@@ -112,7 +112,7 @@ void Scanner::StartScanning()
             newDevice->SetPassword(this->pPassword);
             newDevice->SetAPIPort(this->APIport);
             newDevice->SetWebPort(this->WEBport);
-            newDevice->SetNetworkRequestTimeout(300);
+            newDevice->SetNetworkRequestLifetime(300);
             newDevice->SetUpdateInterval(50);
             UncheckedDevices.append(newDevice);
             connect(newDevice, SIGNAL(DeviceExists(ASICDevice *)), this, SLOT(updateDeviceList(ASICDevice *)));
