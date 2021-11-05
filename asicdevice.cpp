@@ -165,12 +165,12 @@ void ASICDevice::ProcessDeviceData(QNetworkReply *reply)
     {
         pLastErrorCode=ERROR_NETWORK;
         emit(DeviceError(this));
-        gAppLogger->Log(Address().toString()+" ASICDevice::ProcessDeviceData reply: ERROR: "+reply->errorString(), LOG_ERROR);
+        gAppLogger->Log(reply->url().toString()+" | reply: ERROR: "+reply->errorString(), LOG_ERROR);
         goto alldone;
     }
     else
     {
-        gAppLogger->Log(Address().toString()+" ASICDevice::ProcessDeviceData reply: OK", LOG_DEBUG);
+        gAppLogger->Log(reply->url().toString()+" | reply: OK", LOG_DEBUG);
     }
     NetLag*=0.8;
     NetLag+=pRequestStartTime.msecsTo(QTime::currentTime())*0.2;
