@@ -16,6 +16,7 @@ public:
     void SetUserName(QString userName);
     void SetPassword(QString password);
 public slots:
+    void SendNewConfig();
     void StartScanning();
     void StopScanning();
     void updateDeviceList(ASICDevice *device);

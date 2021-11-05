@@ -147,3 +147,95 @@ void Scanner::StopScanning()
         Device->deleteLater();
     }
 }
+
+void Scanner::SendNewConfig()
+{
+    gAppLogger->Log("Scanner::SendNewConfig()", LOG_DEBUG);
+    if(gKnownDevicesList->isEmpty())
+    {
+        gAppLogger->Log("Host list is empty =/\nnothing will be done.", LOG_DEBUG);
+        return;
+    }
+    QStringList NewDeviceSettings;
+    QByteArray DataToSend;
+    int setting;
+    NewDeviceSettings.append(QString("pool1url=stratum+tcp://www.google.com"));
+    NewDeviceSettings.append(QString("pool1user=alex"));
+    NewDeviceSettings.append(QString("pool1pw=xxx"));
+    NewDeviceSettings.append(QString("pool2url=stratum+tcp://www.google.com"));
+    NewDeviceSettings.append(QString("pool2user=alex"));
+    NewDeviceSettings.append(QString("pool2pw=xxx"));
+    NewDeviceSettings.append(QString("pool3url=stratum+tcp://www.google.com"));
+    NewDeviceSettings.append(QString("pool3user=alex"));
+    NewDeviceSettings.append(QString("pool3pw=xxx"));
+    NewDeviceSettings.append(QString("nobeeper=false"));
+    NewDeviceSettings.append(QString("notempoverctrl=false"));
+    NewDeviceSettings.append(QString("fan_customize_swith=false"));
+    NewDeviceSettings.append(QString("fan_customize_value=90"));
+    NewDeviceSettings.append(QString("freq=550"));
+    NewDeviceSettings.append(QString("voltage=0706"));
+    NewDeviceSettings.append(QString("asic_boost=true"));
+    foreach(ASICDevice *Device, *gKnownDevicesList)
+    {
+        DataToSend.clear();
+        for(setting=0; setting<NewDeviceSettings.count(); setting++)
+        {
+            if(NewDeviceSettings.at(setting).split('=').first()==QString("pool1user"))
+            {
+                DataToSend.append(QString("_ant_pool1user="));
+                if(2==NewDeviceSettings.at(setting).split('=', QString::SkipEmptyParts).count())
+                {
+                    DataToSend.append(NewDeviceSettings.at(setting).split('=').last()+
+                                      QString(".")+
+                                      QString::number((Device->Address().toIPv4Address()>>24)&0xff)+
+                                      QString("x")+
+                                      QString::number((Device->Address().toIPv4Address()>>16)&0xff)+
+                                      QString("x")+
+                                      QString::number((Device->Address().toIPv4Address()>>8)&0xff)+
+                                      QString("x")+
+                                      QString::number((Device->Address().toIPv4Address())&0xff));
+                }
+                DataToSend.append(" ");
+            }
+            else if(NewDeviceSettings.at(setting).split('=').first()==QString("pool2user"))
+            {
+                DataToSend.append(QString("_ant_pool2user="));
+                if(2==NewDeviceSettings.at(setting).split('=', QString::SkipEmptyParts).count())
+                {
+                    DataToSend.append(NewDeviceSettings.at(setting).split('=').last()+
+                                      QString(".")+
+                                      QString::number((Device->Address().toIPv4Address()>>24)&0xff)+
+                                      QString("x")+
+                                      QString::number((Device->Address().toIPv4Address()>>16)&0xff)+
+                                      QString("x")+
+                                      QString::number((Device->Address().toIPv4Address()>>8)&0xff)+
+                                      QString("x")+
+                                      QString::number((Device->Address().toIPv4Address())&0xff));
+                }
+                DataToSend.append(" ");
+            }
+            else if(NewDeviceSettings.at(setting).split('=').first()==QString("pool3user"))
+            {
+                DataToSend.append(QString("_ant_pool3user="));
+                if(2==NewDeviceSettings.at(setting).split('=', QString::SkipEmptyParts).count())
+                {
+                    DataToSend.append(NewDeviceSettings.at(setting).split('=').last()+
+                                      QString(".")+
+                                      QString::number((Device->Address().toIPv4Address()>>24)&0xff)+
+                                      QString("x")+
+                                      QString::number((Device->Address().toIPv4Address()>>16)&0xff)+
+                                      QString("x")+
+                                      QString::number((Device->Address().toIPv4Address()>>8)&0xff)+
+                                      QString("x")+
+                                      QString::number((Device->Address().toIPv4Address())&0xff));
+                }
+                DataToSend.append(" ");
+            }
+            else
+            {
+                DataToSend.append(QString("_ant_")+NewDeviceSettings.at(setting)+QString(" "));
+            }
+        }
+        Device->UploadDataWithPOSTRequest("/cgi-bin/set_miner_conf.cgi", &DataToSend);
+    }
+}
