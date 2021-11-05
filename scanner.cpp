@@ -51,13 +51,12 @@ void Scanner::SetPassword(QString password)
 
 void Scanner::updateDeviceList(ASICDevice *device)
 {
-    gAppLogger->Log("Scanner::updateDeviceList()", LOG_DEBUG);
     disconnect(device, 0, 0, 0);
     UncheckedDevices.removeOne(device);
     device->Stop();
-    gKnownDevicesList->append(device);
     device->SetNetworkRequestTimeout(DEFAULT_NETWORK_REQUEST_TIMEOUT);
     device->SetUpdateInterval(DEFAULT_UPDATE_INTERVAL);
+    gKnownDevicesList->append(device);
     emit(NewDeviceFound());
     gAppLogger->Log("New device found: "+device->Address().toString());
     if(UncheckedDevices.isEmpty())
@@ -68,7 +67,6 @@ void Scanner::updateDeviceList(ASICDevice *device)
 
 void Scanner::clearUpDeviceList(ASICDevice *device)
 {
-    gAppLogger->Log("Scanner::clearUpDeviceList()", LOG_DEBUG);
     disconnect(device, 0, 0, 0);
     UncheckedDevices.removeOne(device);
     device->Stop();
