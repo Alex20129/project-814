@@ -116,6 +116,7 @@ void ASICDevice::Start()
     {
         pUpdateTimer->start();
     }
+    RequestDeviceData();
 }
 
 void ASICDevice::Stop()
@@ -125,6 +126,7 @@ void ASICDevice::Stop()
     {
         pUpdateTimer->stop();
     }
+    Abort();
 }
 
 void ASICDevice::Abort()
@@ -259,17 +261,14 @@ void ASICDevice::on_DataReceived()
 
 void ASICDevice::on_metaDataChanged()
 {
-    if(pAPIReply)
+    if(pAPIReply->error())
     {
-        if(pAPIReply->error())
-        {
-            pLastErrorCode=ERROR_NETWORK;
-            emit(DeviceError(this));
-        }
-        else
-        {
-            pLastErrorCode=NO_ERROR;
-            emit(DeviceExists(this));
-        }
+        pLastErrorCode=ERROR_NETWORK;
+        emit(DeviceError(this));
+    }
+    else
+    {
+        pLastErrorCode=NO_ERROR;
+        emit(DeviceExists(this));
     }
 }

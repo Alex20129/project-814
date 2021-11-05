@@ -55,7 +55,6 @@ void Scanner::updateDeviceList(ASICDevice *device)
     UncheckedDevices.removeOne(device);
     device->Stop();
     device->SetNetworkRequestLifetime(DEFAULT_NETWORK_REQUEST_LIFETIME);
-    device->SetUpdateInterval(DEFAULT_UPDATE_INTERVAL);
     gKnownDevicesList->append(device);
     emit(NewDeviceFound());
 }
@@ -112,10 +111,9 @@ void Scanner::StartScanning()
             newDevice->SetAPIPort(this->APIport);
             newDevice->SetWebPort(this->WEBport);
             newDevice->SetNetworkRequestLifetime(300);
-            newDevice->SetUpdateInterval(50);
-            UncheckedDevices.append(newDevice);
             connect(newDevice, SIGNAL(DeviceExists(ASICDevice *)), this, SLOT(updateDeviceList(ASICDevice *)));
             connect(newDevice, SIGNAL(DeviceError(ASICDevice *)), this, SLOT(clearUpDeviceList(ASICDevice *)));
+            UncheckedDevices.append(newDevice);
             newDevice->Start();
             while(UncheckedDevices.count()>UNCHECKED_DEVICES_MAX_NUM)
             {
