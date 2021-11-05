@@ -25,6 +25,7 @@ private:
     QString pUserName, pPassword;
     QVector <ASICDevice *> UncheckedDevices;
     QList <QNetworkAddressEntry> KnownIFAddresses;
+    quint8 pNeedToStopNow;
 private slots:
     void on_ScanIsRun();
     void on_ScanIsDone();

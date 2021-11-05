@@ -3,6 +3,7 @@
 
 Scanner::Scanner(QObject *parent) : QObject(parent)
 {
+    pNeedToStopNow=0;
     connect(this, SIGNAL(ScanIsDone()), this, SLOT(on_ScanIsDone()));
     connect(this, SIGNAL(ScanIsRun()), this, SLOT(on_ScanIsRun()));
     connect(this, SIGNAL(NewDeviceFound()), this, SLOT(on_NewDeviceFound()));
@@ -95,19 +96,18 @@ void Scanner::on_NewDeviceFound()
 void Scanner::StartScanning()
 {
     gAppLogger->Log("ASICDevice::StartScanning()", LOG_DEBUG);
-    quint32 address;
+    quint32 address, lastPossible;
     QHostAddress AddrFrom, AddrTo;
     emit(ScanIsRun());
-
-    UncheckedDevices.clear();
+    pNeedToStopNow=0;
     foreach(QNetworkAddressEntry IFAddress, KnownIFAddresses)
     {
-        uint32_t lastPossible=(uint32_t)(0xFFFFFFFF-IFAddress.netmask().toIPv4Address());
+        lastPossible=(quint32)(0xFFFFFFFF-IFAddress.netmask().toIPv4Address());
         AddrFrom=QHostAddress((quint32)(IFAddress.ip().toIPv4Address()&IFAddress.netmask().toIPv4Address())+1);
         AddrTo=QHostAddress((quint32)(IFAddress.ip().toIPv4Address()&IFAddress.netmask().toIPv4Address())+lastPossible);
         //gAppLogger->Log("first possible device "+AddrFrom.toString());
         //gAppLogger->Log("last possible device "+AddrTo.toString());
-        for(address=AddrFrom.toIPv4Address(); address<AddrTo.toIPv4Address(); address++)
+        for(address=AddrFrom.toIPv4Address(); address<AddrTo.toIPv4Address() && !pNeedToStopNow; address++)
         {
             ASICDevice *newDevice=new ASICDevice;
             newDevice->SetAddress(QHostAddress(address));
@@ -127,13 +127,23 @@ void Scanner::StartScanning()
             newDevice->Start();
         }
     }
+    pNeedToStopNow=0;
 }
 
 void Scanner::StopScanning()
 {
     gAppLogger->Log("ASICDevice::StopScanning()", LOG_DEBUG);
+    if(pNeedToStopNow)
+    {
+        return;
+    }
+    pNeedToStopNow=1;
+    ASICDevice *Device;
     while(UncheckedDevices.count())
     {
-        clearUpDeviceList(UncheckedDevices.last());
+        Device=UncheckedDevices.takeLast();
+        disconnect(Device, 0, 0, 0);
+        Device->Stop();
+        Device->deleteLater();
     }
 }
