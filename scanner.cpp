@@ -55,6 +55,7 @@ void Scanner::updateDeviceList(ASICDevice *device)
     UncheckedDevices.removeOne(device);
     device->Stop();
     device->SetNetworkRequestLifetime(DEFAULT_NETWORK_REQUEST_LIFETIME);
+    device->SetUpdateInterval(DEFAULT_UPDATE_INTERVAL);
     gKnownDevicesList->append(device);
     emit(NewDeviceFound());
 }
@@ -69,22 +70,22 @@ void Scanner::clearUpDeviceList(ASICDevice *device)
 
 void Scanner::on_ScanIsDone()
 {
-    gAppLogger->Log("ASICDevice::on_ScanIsDone()", LOG_DEBUG);
+    gAppLogger->Log("Scanner::on_ScanIsDone()", LOG_DEBUG);
 }
 
 void Scanner::on_ScanIsRun()
 {
-    gAppLogger->Log("ASICDevice::on_ScanIsRun()", LOG_DEBUG);
+    gAppLogger->Log("Scanner::on_ScanIsRun()", LOG_DEBUG);
 }
 
 void Scanner::on_NewDeviceFound()
 {
-    gAppLogger->Log("ASICDevice::on_NewDeviceFound() "+gKnownDevicesList->last()->Address().toString(), LOG_DEBUG);
+    gAppLogger->Log("Scanner::on_NewDeviceFound() "+gKnownDevicesList->last()->Address().toString(), LOG_DEBUG);
 }
 
 void Scanner::StartScanning()
 {
-    gAppLogger->Log("ASICDevice::StartScanning()", LOG_DEBUG);
+    gAppLogger->Log("Scanner::StartScanning()", LOG_DEBUG);
     if(pIsBusy)
     {
         return;
@@ -111,6 +112,7 @@ void Scanner::StartScanning()
             newDevice->SetAPIPort(this->APIport);
             newDevice->SetWebPort(this->WEBport);
             newDevice->SetNetworkRequestLifetime(300);
+            newDevice->SetUpdateInterval(1);
             connect(newDevice, SIGNAL(DeviceExists(ASICDevice *)), this, SLOT(updateDeviceList(ASICDevice *)));
             connect(newDevice, SIGNAL(DeviceError(ASICDevice *)), this, SLOT(clearUpDeviceList(ASICDevice *)));
             UncheckedDevices.append(newDevice);
@@ -132,7 +134,7 @@ void Scanner::StartScanning()
 
 void Scanner::StopScanning()
 {
-    gAppLogger->Log("ASICDevice::StopScanning()", LOG_DEBUG);
+    gAppLogger->Log("Scanner::StopScanning()", LOG_DEBUG);
     if(pNeedToStopNow)
     {
         return;

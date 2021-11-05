@@ -35,7 +35,6 @@ public:
 public slots:
     void Start();
     void Stop();
-    void Abort();
 private:
     uint pUpdateInterval;
     uint pNetworkRequestLifetime;
