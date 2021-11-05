@@ -132,8 +132,6 @@ void ASICDevice::timerEvent(QTimerEvent *event)
     if(event->timerId()==pNetworkTimeoutTimerID)
     {
         event->accept();
-        this->killTimer(pNetworkTimeoutTimerID);
-        pNetworkTimeoutTimerID=0;
         pLastErrorCode=ERROR_NETWORK_REQUEST_TIMEOUT;
         this->Abort();
     }
