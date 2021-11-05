@@ -164,7 +164,7 @@ void ASICDevice::RequestDeviceData()
     NewRequest.setUrl(pURL);
     NewRequest.setHeader(QNetworkRequest::UserAgentHeader, DEFAULT_USER_AGENT);
     pRequestStartTime=QTime::currentTime();
-    pRequestLifeTimer->singleShot(pNetworkRequestLifetime, this, SLOT(abort()));
+    pRequestLifeTimer->singleShot(pNetworkRequestLifetime, this, SLOT(Abort()));
     pAPIReply=pAPIManager->get(NewRequest);
     connect(pAPIReply, SIGNAL(metaDataChanged()), this, SLOT(on_metaDataChanged()));
 }
