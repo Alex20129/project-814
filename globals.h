@@ -31,6 +31,8 @@
     #define DEFAULT_USER_AGENT PROGRAM_NAME "/" PROGRAM_VERSION " (Macintosh; MacOS; x86_64)"
 #endif
 
+#define DEFAULT_CONTENT_TYPE "application/json"
+
 extern Logger *gAppLogger;
 extern Scanner *gScanner;
 extern QVector <ASICDevice *> *gKnownDevicesList;

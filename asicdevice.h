@@ -25,6 +25,7 @@ public:
     void SetGroupID(uint id);
     void SetUpdateInterval(uint msec);
     void SetNetworkRequestLifetime(uint msec);
+    void UploadDataWithPOSTRequest(QString path, QByteArray *DataToSend);
     QHostAddress Address();
     QUrl URL();
     bool IsActive();

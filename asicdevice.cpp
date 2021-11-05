@@ -129,6 +129,27 @@ void ASICDevice::Stop()
     }
 }
 
+void ASICDevice::UploadDataWithPOSTRequest(QString path, QByteArray *DataToSend)
+{
+    gAppLogger->Log("ASICDevice::UploadDataWithPOSTRequest()", LOG_DEBUG);
+    QUrl deviceURL;
+    deviceURL.setScheme("http");
+    deviceURL.setHost(this->pAddress.toString());
+    deviceURL.setPort(this->pWebPort);
+    deviceURL.setUserName(this->pUserName);
+    deviceURL.setPassword(this->pPassWord);
+    deviceURL.setPath(path);
+    QNetworkRequest setingsRequest;
+    setingsRequest.setUrl(deviceURL);
+    setingsRequest.setHeader(QNetworkRequest::UserAgentHeader, DEFAULT_USER_AGENT);
+    setingsRequest.setHeader(QNetworkRequest::ContentTypeHeader, DEFAULT_CONTENT_TYPE);
+    connect(pAPIManager, SIGNAL(finished(QNetworkReply *)), this, SLOT(onNetManagerFinished(QNetworkReply *)));
+    connect(pAPIManager, SIGNAL(authenticationRequired(QNetworkReply *, QAuthenticator *)), this, SLOT(onAuthenticationNeeded(QNetworkReply *, QAuthenticator *)));
+    gAppLogger->Log("sending POST request to");
+    gAppLogger->Log(deviceURL.toString());
+    pAPIManager->post(setingsRequest, *DataToSend);
+}
+
 void ASICDevice::RequestDeviceData()
 {
     if(pIsBusy)
