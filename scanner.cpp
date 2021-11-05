@@ -8,7 +8,6 @@ Scanner::Scanner(QObject *parent) : QObject(parent)
     connect(this, SIGNAL(ScanIsDone()), this, SLOT(on_ScanIsDone()));
     connect(this, SIGNAL(ScanIsRun()), this, SLOT(on_ScanIsRun()));
     connect(this, SIGNAL(NewDeviceFound()), this, SLOT(on_NewDeviceFound()));
-    DiscoverNetworkInterfaces();
 }
 
 void Scanner::DiscoverNetworkInterfaces()
@@ -25,7 +24,6 @@ void Scanner::DiscoverNetworkInterfaces()
         {
             gAppLogger->Log("Device: " + netInterface.name(), LOG_NOTICE);
             gAppLogger->Log("HardwareAddress: " + netInterface.hardwareAddress(), LOG_NOTICE);
-
             foreach(QNetworkAddressEntry addrEntry, netInterface.addressEntries())
             {
                 if(addrEntry.ip().protocol()!=QAbstractSocket::IPv6Protocol &&
@@ -95,6 +93,7 @@ void Scanner::StartScanning()
     pIsBusy=1;
     pNeedToStopNow=0;
     emit(ScanIsRun());
+    DiscoverNetworkInterfaces();
     quint32 address, lastPossible;
     QHostAddress AddrFrom, AddrTo;
     foreach(QNetworkAddressEntry IFAddress, KnownIFAddresses)
