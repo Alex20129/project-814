@@ -52,7 +52,7 @@ void Scanner::SetPassword(QString password)
 
 void Scanner::updateDeviceList(ASICDevice *device)
 {
-    disconnect(device, 0, 0, 0);
+    disconnect(device, 0, this, 0);
     UncheckedDevices.removeOne(device);
     device->Stop();
     device->SetNetworkRequestTimeout(DEFAULT_NETWORK_REQUEST_TIMEOUT);
@@ -68,7 +68,7 @@ void Scanner::updateDeviceList(ASICDevice *device)
 
 void Scanner::clearUpDeviceList(ASICDevice *device)
 {
-    disconnect(device, 0, 0, 0);
+    disconnect(device, 0, this, 0);
     UncheckedDevices.removeOne(device);
     device->Stop();
     device->deleteLater();
