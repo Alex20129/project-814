@@ -14,8 +14,9 @@ ASICDevice::ASICDevice(QObject *parent) : QObject(parent)
     pNetworkRequestTimeout=DEFAULT_NETWORK_REQUEST_TIMEOUT;
 
     pReceivedData=new QByteArray;
-    pAPITimer=new QTimer(this);
     pAPIManager=new QNetworkAccessManager(this);
+    pAPITimer=new QTimer(this);
+    pAPITimer->setTimerType(Qt::CoarseTimer);
     pAPITimer->setInterval(DEFAULT_UPDATE_INTERVAL);
 
     connect(pAPITimer, SIGNAL(timeout()), this, SLOT(RequestDeviceData()));
