@@ -15,7 +15,7 @@
 #define DEFAULT_API_PORT					4028
 #define DEFAULT_WEB_PORT					80
 
-#define UNCHECKED_DEVICES_MAX_NUM		512
+#define UNCHECKED_DEVICES_MAX_NUM		256
 #define DEVICE_POOLS_NUM					3
 
 #define NO_ERROR							0
