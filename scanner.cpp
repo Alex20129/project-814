@@ -4,6 +4,7 @@
 Scanner::Scanner(QObject *parent) : QObject(parent)
 {
     pNeedToStopNow=0;
+    pIsBusy=0;
     connect(this, SIGNAL(ScanIsDone()), this, SLOT(on_ScanIsDone()));
     connect(this, SIGNAL(ScanIsRun()), this, SLOT(on_ScanIsRun()));
     connect(this, SIGNAL(NewDeviceFound()), this, SLOT(on_NewDeviceFound()));
@@ -59,11 +60,6 @@ void Scanner::updateDeviceList(ASICDevice *device)
     device->SetUpdateInterval(DEFAULT_UPDATE_INTERVAL);
     gKnownDevicesList->append(device);
     emit(NewDeviceFound());
-    gAppLogger->Log("New device found: "+device->Address().toString());
-    if(UncheckedDevices.isEmpty())
-    {
-        emit(ScanIsDone());
-    }
 }
 
 void Scanner::clearUpDeviceList(ASICDevice *device)
@@ -72,10 +68,6 @@ void Scanner::clearUpDeviceList(ASICDevice *device)
     UncheckedDevices.removeOne(device);
     device->Stop();
     device->deleteLater();
-    if(UncheckedDevices.isEmpty())
-    {
-        emit(ScanIsDone());
-    }
 }
 
 void Scanner::on_ScanIsDone()
@@ -90,16 +82,21 @@ void Scanner::on_ScanIsRun()
 
 void Scanner::on_NewDeviceFound()
 {
-    gAppLogger->Log("ASICDevice::on_NewDeviceFound()", LOG_DEBUG);
+    gAppLogger->Log("ASICDevice::on_NewDeviceFound() "+gKnownDevicesList->last()->Address().toString(), LOG_DEBUG);
 }
 
 void Scanner::StartScanning()
 {
     gAppLogger->Log("ASICDevice::StartScanning()", LOG_DEBUG);
+    if(pIsBusy)
+    {
+        return;
+    }
+    pIsBusy=1;
+    pNeedToStopNow=0;
+    emit(ScanIsRun());
     quint32 address, lastPossible;
     QHostAddress AddrFrom, AddrTo;
-    emit(ScanIsRun());
-    pNeedToStopNow=0;
     foreach(QNetworkAddressEntry IFAddress, KnownIFAddresses)
     {
         lastPossible=(quint32)(0xFFFFFFFF-IFAddress.netmask().toIPv4Address());
@@ -127,7 +124,13 @@ void Scanner::StartScanning()
             }
         }
     }
+    while(UncheckedDevices.count())
+    {
+        QCoreApplication::processEvents();
+    }
+    emit(ScanIsDone());
     pNeedToStopNow=0;
+    pIsBusy=0;
 }
 
 void Scanner::StopScanning()
