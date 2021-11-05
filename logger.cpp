@@ -67,9 +67,9 @@ void Logger::Log(const char *message, unsigned int level)
     pIsBusy=false;
 }
 
-void Logger::Log(QByteArray message, unsigned int level)
+void Logger::Log(QByteArray *message, unsigned int level)
 {
-    Log(message.data(), level);
+    Log(message->data(), level);
 }
 
 void Logger::Log(QString message, unsigned int level)

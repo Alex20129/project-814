@@ -37,13 +37,15 @@ ASICDevice::~ASICDevice()
     delete pReceivedData;
 }
 
+// http://x.x.x.x/cgi-bin/minerConfiguration.cgi
+// http://x.x.x.x/cgi-bin/minerStatus.cgi
 void ASICDevice::SetAddress(QHostAddress address)
 {
     gAppLogger->Log("ASICDevice::SetAddress() "+address.toString(), LOG_DEBUG);
     pAddress=address;
     pURL.setScheme("http");
     pURL.setHost(pAddress.toString());
-    pURL.setPath("/updatecglog.cgi");
+    pURL.setPath("/cgi-bin/minerConfiguration.cgi");
 }
 
 void ASICDevice::SetUserName(QString userName)
@@ -208,9 +210,11 @@ void ASICDevice::on_AuthenticationRequired(QNetworkReply *reply, QAuthenticator 
 
 void ASICDevice::on_DataReceived()
 {
+    gAppLogger->Log("ASICDevice::on_DataReceived()", LOG_DEBUG);
     int i, is_updated=0;
     uint uval;
     char str[128], poolsubstr[512];
+    gAppLogger->Log(pReceivedData, LOG_DEBUG);
     for(i=0; i<pReceivedData->size(); i++)
     {
         if(1==sscanf(&pReceivedData->data()[i], ",Type=%127[^,|]", str))

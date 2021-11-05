@@ -20,7 +20,7 @@ public:
     void SetLogFilePath(const char *newPath);
     void SetLogFilePath(QString newPath);
     void Log(const char *message, unsigned int level=LOG_INFO);
-    void Log(QByteArray message, unsigned int level=LOG_INFO);
+    void Log(QByteArray *message, unsigned int level=LOG_INFO);
     void Log(QString message, unsigned int level=LOG_INFO);
     static unsigned int LogSettings;
     static bool LogFileEnabled;
