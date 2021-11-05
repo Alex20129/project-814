@@ -41,7 +41,6 @@ ASICDevice::~ASICDevice()
 // http://x.x.x.x/cgi-bin/minerStatus.cgi
 void ASICDevice::SetAddress(QHostAddress address)
 {
-    gAppLogger->Log("ASICDevice::SetAddress() "+address.toString(), LOG_DEBUG);
     pAddress=address;
     pURL.setScheme("http");
     pURL.setHost(pAddress.toString());
@@ -148,7 +147,7 @@ void ASICDevice::RequestDeviceData()
         pIsBusy=false;
         return;
     }
-    gAppLogger->Log("ASICDevice::RequestDeviceData() "+pURL.toString(), LOG_DEBUG);
+    gAppLogger->Log("ASICDevice::RequestDeviceData()\n"+pURL.toString(), LOG_DEBUG);
     QNetworkRequest NewRequest;
     NewRequest.setUrl(pURL);
     NewRequest.setHeader(QNetworkRequest::UserAgentHeader, DEFAULT_USER_AGENT);
@@ -166,12 +165,12 @@ void ASICDevice::ProcessDeviceData(QNetworkReply *reply)
     {
         pLastErrorCode=ERROR_NETWORK;
         emit(DeviceError(this));
-        gAppLogger->Log(reply->url().toString()+" | reply: ERROR: "+reply->errorString(), LOG_ERROR);
+        gAppLogger->Log("\n"+reply->url().toString()+" | ERROR: "+reply->errorString(), LOG_ERROR);
         goto alldone;
     }
     else
     {
-        gAppLogger->Log(reply->url().toString()+" | reply: OK", LOG_DEBUG);
+        gAppLogger->Log("\n"+reply->url().toString()+" | OK", LOG_DEBUG);
     }
     NetLag*=0.8;
     NetLag+=pRequestStartTime.msecsTo(QTime::currentTime())*0.2;
@@ -179,7 +178,7 @@ void ASICDevice::ProcessDeviceData(QNetworkReply *reply)
     {
         pLastErrorCode=ERROR_NETWORK_NO_DATA;
         emit(DeviceError(this));
-        gAppLogger->Log(Address().toString()+"ASICDevice::ProcessDeviceData reply: no data to read", LOG_ERROR);
+        gAppLogger->Log(Address().toString()+"\nReply: have no data to read", LOG_ERROR);
         goto alldone;
     }
     pLastErrorCode=NO_ERROR;
