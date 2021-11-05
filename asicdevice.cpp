@@ -183,7 +183,7 @@ void ASICDevice::ProcessDeviceData(QNetworkReply *reply)
     {
         pLastErrorCode=ERROR_NETWORK;
         emit(DeviceError(this));
-        gAppLogger->Log("\n"+reply->url().toString()+" | ERROR: "+reply->errorString(), LOG_ERROR);
+        gAppLogger->Log("\n"+reply->url().toString()+" | ERROR:\n"+reply->errorString(), LOG_ERROR);
         goto alldone;
     }
     else
