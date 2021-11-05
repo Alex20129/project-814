@@ -109,8 +109,6 @@ void Scanner::StartScanning()
             newDevice->SetAddress(QHostAddress(address));
             newDevice->SetUserName(this->pUserName);
             newDevice->SetPassword(this->pPassword);
-            newDevice->SetAPIPort(this->APIport);
-            newDevice->SetWebPort(this->WEBport);
             newDevice->SetNetworkRequestLifetime(300);
             newDevice->SetUpdateInterval(1);
             connect(newDevice, SIGNAL(DeviceExists(ASICDevice *)), this, SLOT(updateDeviceList(ASICDevice *)));

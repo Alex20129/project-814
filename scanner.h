@@ -12,7 +12,6 @@ signals:
     void NewDeviceFound();
 public:
     explicit Scanner(QObject *parent=nullptr);
-    quint16 APIport, WEBport;
     void DiscoverNetworkInterfaces();
     void SetUserName(QString userName);
     void SetPassword(QString password);

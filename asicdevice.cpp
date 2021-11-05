@@ -45,6 +45,7 @@ void ASICDevice::SetAddress(QHostAddress address)
     pAddress=address;
     pURL.setScheme("http");
     pURL.setHost(pAddress.toString());
+    pURL.setPort(pWebPort);
     pURL.setPath("/cgi-bin/minerConfiguration.cgi");
 }
 
@@ -147,7 +148,7 @@ void ASICDevice::RequestDeviceData()
         pIsBusy=false;
         return;
     }
-    gAppLogger->Log("ASICDevice::RequestDeviceData() "+pAddress.toString(), LOG_DEBUG);
+    gAppLogger->Log("ASICDevice::RequestDeviceData() "+pURL.toString(), LOG_DEBUG);
     QNetworkRequest NewRequest;
     NewRequest.setUrl(pURL);
     NewRequest.setHeader(QNetworkRequest::UserAgentHeader, DEFAULT_USER_AGENT);
