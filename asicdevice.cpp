@@ -214,6 +214,7 @@ void ASICDevice::on_DataReceived()
     int i, is_updated=0;
     uint uval;
     char str[128], poolsubstr[512];
+    *pReceivedData=QByteArray("\n")+*pReceivedData;
     gAppLogger->Log(pReceivedData, LOG_DEBUG);
     for(i=0; i<pReceivedData->size(); i++)
     {
