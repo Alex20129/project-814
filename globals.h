@@ -5,7 +5,7 @@
 #include "logger.h"
 #include "scanner.h"
 
-#define PROGRAM_NAME    "asicconf"
+#define PROGRAM_NAME	"asicconf"
 #define PROGRAM_VERSION "0.1.5"
 
 #define DEFAULT_UPDATE_INTERVAL			4000
@@ -24,11 +24,11 @@
 #define ERROR_NETWORK_NO_DATA			3
 
 #if defined(Q_OS_LINUX)
-    #define DEFAULT_USER_AGENT PROGRAM_NAME "/" PROGRAM_VERSION " (X11; Linux; x86_64)"
+	#define DEFAULT_USER_AGENT PROGRAM_NAME "/" PROGRAM_VERSION " (X11; Linux; x86_64)"
 #elif defined(Q_OS_WIN)
-    #define DEFAULT_USER_AGENT PROGRAM_NAME "/" PROGRAM_VERSION " (Windows NT 6.1; Windows; x86_64)"
+	#define DEFAULT_USER_AGENT PROGRAM_NAME "/" PROGRAM_VERSION " (Windows NT 6.1; Windows; x86_64)"
 #elif defined(Q_OS_MACOS)
-    #define DEFAULT_USER_AGENT PROGRAM_NAME "/" PROGRAM_VERSION " (Macintosh; MacOS; x86_64)"
+	#define DEFAULT_USER_AGENT PROGRAM_NAME "/" PROGRAM_VERSION " (Macintosh; MacOS; x86_64)"
 #endif
 
 #define DEFAULT_CONTENT_TYPE "application/json"

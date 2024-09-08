@@ -5,31 +5,31 @@
 
 class Scanner : public QObject
 {
-    Q_OBJECT
+	Q_OBJECT
 signals:
-    void ScanIsRun();
-    void ScanIsDone();
-    void NewDeviceFound();
+	void ScanIsRun();
+	void ScanIsDone();
+	void NewDeviceFound();
 public:
-    explicit Scanner(QObject *parent=nullptr);
-    void DiscoverNetworkInterfaces();
-    void SetUserName(QString userName);
-    void SetPassword(QString password);
+	explicit Scanner(QObject *parent=nullptr);
+	void DiscoverNetworkInterfaces();
+	void SetUserName(QString userName);
+	void SetPassword(QString password);
 public slots:
-    void SendNewConfig();
-    void StartScanning();
-    void StopScanning();
-    void updateDeviceList(ASICDevice *device);
-    void clearUpDeviceList(ASICDevice *device);
+	void SendNewConfig();
+	void StartScanning();
+	void StopScanning();
+	void updateDeviceList(ASICDevice *device);
+	void clearUpDeviceList(ASICDevice *device);
 private:
-    QString pUserName, pPassword;
-    QVector <ASICDevice *> UncheckedDevices;
-    QList <QNetworkAddressEntry> KnownIFAddresses;
-    quint8 pNeedToStopNow, pIsBusy;
+	QString pUserName, pPassword;
+	QVector <ASICDevice *> UncheckedDevices;
+	QList <QNetworkAddressEntry> KnownIFAddresses;
+	quint8 pNeedToStopNow, pIsBusy;
 private slots:
-    void on_ScanIsRun();
-    void on_ScanIsDone();
-    void on_NewDeviceFound();
+	void on_ScanIsRun();
+	void on_ScanIsDone();
+	void on_NewDeviceFound();
 };
 
 #endif // SCANNERWINDOW_H

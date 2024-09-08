@@ -3,21 +3,21 @@
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication App(argc, argv);
+	QCoreApplication App(argc, argv);
 
-    gAppLogger=new Logger;
-    gAppLogger->Log("Log begin...", LOG_NOTICE);
+	gAppLogger=new Logger;
+	gAppLogger->Log("Log begin...", LOG_NOTICE);
 
-    gKnownDevicesList=new QVector <ASICDevice *>;
-    gScanner=new Scanner;
-    gScanner->SetUserName(QString("root"));
-    gScanner->SetPassword(QString("root"));
+	gKnownDevicesList=new QVector <ASICDevice *>;
+	gScanner=new Scanner;
+	gScanner->SetUserName(QString("root"));
+	gScanner->SetPassword(QString("root"));
 
-    gAppLogger->Log("Everything is prepared, start now.", LOG_NOTICE);
+	gAppLogger->Log("Everything is prepared, start now.", LOG_NOTICE);
 
-    QCoreApplication::connect(gScanner, SIGNAL(ScanIsDone()), gScanner, SLOT(SendNewConfig()));
+	QCoreApplication::connect(gScanner, SIGNAL(ScanIsDone()), gScanner, SLOT(SendNewConfig()));
 
-    QTimer::singleShot(DEFAULT_SINGLE_SHOT_DELAY, Qt::CoarseTimer, gScanner, SLOT(StartScanning()));
+	QTimer::singleShot(DEFAULT_SINGLE_SHOT_DELAY, Qt::CoarseTimer, gScanner, SLOT(StartScanning()));
 
-    return App.exec();
+	return App.exec();
 }

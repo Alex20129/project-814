@@ -5,7 +5,7 @@
 
 #define	LOG_EMERG		1	/* system is unusable */
 #define	LOG_ALERT		2	/* action must be taken immediately */
-#define	LOG_CRITICAL	4	/* critical conditions */
+#define	LOG_CRITICAL		4	/* critical conditions */
 #define	LOG_ERROR		8	/* error conditions */
 #define	LOG_WARNING		16	/* warning conditions */
 #define	LOG_NOTICE		32	/* normal but significant condition */
@@ -15,20 +15,20 @@
 class Logger
 {
 public:
-    Logger();
-    ~Logger();
-    void SetLogFilePath(const char *newPath);
-    void SetLogFilePath(QString newPath);
-    void Log(const char *message, unsigned int level=LOG_INFO);
-    void Log(QByteArray *message, unsigned int level=LOG_INFO);
-    void Log(QString message, unsigned int level=LOG_INFO);
-    static unsigned int LogSettings;
-    static bool LogFileEnabled;
+	Logger();
+	~Logger();
+	void SetLogFilePath(const char *newPath);
+	void SetLogFilePath(QString newPath);
+	void Log(const char *message, unsigned int level=LOG_INFO);
+	void Log(QByteArray *message, unsigned int level=LOG_INFO);
+	void Log(QString message, unsigned int level=LOG_INFO);
+	static unsigned int LogSettings;
+	static bool LogFileEnabled;
 private:
-    static bool pIsBusy;
-    char *pLogFilePath;
-    FILE *pLogFile;
-    QString pCurrDTstring;
+	static bool pIsBusy;
+	char *pLogFilePath;
+	FILE *pLogFile;
+	QString pCurrDTstring;
 };
 
 #endif // LOGGER_HPP
